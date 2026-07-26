@@ -506,20 +506,16 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="signInTitle">
       <div class="kick">Homeowners only</div>
       <h3 id="signInTitle">Sign in</h3>
-      <p>Enter the email on file with the association. Contact details, documents, and meeting links unlock once you're verified.</p>
+      <p>Enter the homeowner access code. Contact details, documents, and meeting links unlock once you’re verified.</p>
       <form id="signInForm">
         <label class="field">
-          <span>Email</span>
-          <input type="email" name="email" required />
-        </label>
-        <label class="field">
           <span>Access code</span>
-          <input type="password" name="code" required />
+          <input type="password" name="code" required autocomplete="off" />
         </label>
         <div class="signin-error" id="signInError" hidden></div>
         <button type="submit" class="submit-dark">Sign in</button>
       </form>
-      <div class="demo">Demo: code <strong>resident</strong> for homeowner access, <strong>board</strong> for board-member access. The live site will send a one-time code by email instead.</div>
+      <div class="demo">Enter the access code shared with homeowners by the association. Don’t have it? Use the <a href="#contact">contact form</a> and a board member will send it to you.</div>
     </div>
   </div>
 
@@ -535,12 +531,16 @@
   "use strict";
 
   // ---------- Data ----------
+  // Public board roster — names and roles only. Real emails/phones live server-side
+  // (netlify/lib/auth.mts) and are returned by /api/session and /api/login ONLY for a
+  // valid signed-in session, so they never appear in this client bundle. `hasEmail`
+  // only signals whether a masked email placeholder should show — not the address.
   var BOARD = [
-    { role: "President",      name: "Jacqueline Roumou", email: "Jackie.roumou@gmail.com",      phone: "850-294-3626" },
-    { role: "Vice President", name: "Beverly Fierro",    email: "Beverly.fierro@bsssalem.com", phone: "850-868-0947" },
-    { role: "Treasurer",      name: "Gregory Smith",     email: "greggsmith80@gmail.com",       phone: "850-264-4182" },
-    { role: "Secretary",      name: "Gayla Parks",       email: "gparks1207@gmail.com",         phone: "850-566-4741" },
-    { role: "Member at Large",name: "Sean Hagan",        email: "",                             phone: "732-778-7986" },
+    { role: "President",       name: "Jacqueline Roumou", hasEmail: true },
+    { role: "Vice President",  name: "Beverly Fierro",    hasEmail: true },
+    { role: "Treasurer",       name: "Gregory Smith",     hasEmail: true },
+    { role: "Secretary",       name: "Gayla Parks",       hasEmail: true },
+    { role: "Member at Large", name: "Sean Hagan",        hasEmail: false },
   ];
 
   var MINUTES = [
@@ -551,6 +551,7 @@
   // ---------- State ----------
   var state = {
     role: null,        // null | "resident" | "admin"
+    board: null,       // full board contact list from the server once signed in
     signInOpen: false,
     dragging: false,
     sent: false,
@@ -592,7 +593,10 @@
   function renderBoard() {
     var si = signedIn();
     var grid = $("#boardGrid");
-    grid.innerHTML = BOARD.map(function (m) {
+    // Signed in: use the server-provided list (with contact details). Signed out:
+    // use the public roster (names/roles only).
+    var list = (si && state.board) ? state.board : BOARD;
+    grid.innerHTML = list.map(function (m) {
       var contact;
       if (si) {
         var emailLine = m.email
@@ -603,7 +607,7 @@
           : '';
         contact = emailLine + phoneLine;
       } else {
-        var maskedEmail = m.email ? "••••••••@•••••.com" : "—";
+        var maskedEmail = m.hasEmail ? "••••••••@•••••.com" : "—";
         contact =
           '<div class="masked-stack">' +
             '<div class="masked"><span>' + maskedEmail + '</span><span>•••-•••-••••</span></div>' +
@@ -692,7 +696,7 @@
     signInError.hidden = true;
     signInError.textContent = "";
     overlay.hidden = false;
-    var input = overlay.querySelector('input[name="email"]');
+    var input = overlay.querySelector('input[name="code"]');
     if (input) input.focus();
   }
   function closeSignIn() {
@@ -705,12 +709,36 @@
   overlay.addEventListener("click", function (e) { if (e.target === overlay) closeSignIn(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && state.signInOpen) closeSignIn(); });
 
-  $("#signInForm").addEventListener("submit", function (e) {
+  $("#signInForm").addEventListener("submit", async function (e) {
     e.preventDefault();
-    var code = (new FormData(e.target).get("code") || "").toString().trim().toLowerCase();
-    if (code === "board") { state.role = "admin"; closeSignIn(); render(); }
-    else if (code === "resident") { state.role = "resident"; closeSignIn(); render(); }
-    else { signInError.textContent = 'That code isn’t recognized. Try “resident” or “board”.'; signInError.hidden = false; }
+    var code = (new FormData(e.target).get("code") || "").toString();
+    var btn = e.target.querySelector('button[type="submit"]');
+    signInError.hidden = true;
+    if (btn) btn.disabled = true;
+    try {
+      var r = await fetch("/api/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ code: code }),
+      });
+      if (r.ok) {
+        var data = await r.json();
+        state.role = data.role;
+        state.board = data.board || null;
+        closeSignIn();
+        render();
+      } else {
+        var msg = "That code isn’t recognized.";
+        try { var err = await r.json(); if (err && err.error) msg = err.error; } catch (e2) {}
+        signInError.textContent = msg;
+        signInError.hidden = false;
+      }
+    } catch (e3) {
+      signInError.textContent = "Couldn’t reach the server. Please try again.";
+      signInError.hidden = false;
+    } finally {
+      if (btn) btn.disabled = false;
+    }
   });
 
   // Global delegated click handling
@@ -718,7 +746,11 @@
     var t = e.target.closest ? e.target.closest("[data-open-signin],[data-signout],[data-rename],[data-delete]") : null;
     if (!t) return;
     if (t.hasAttribute("data-open-signin")) { e.preventDefault(); openSignIn(); return; }
-    if (t.hasAttribute("data-signout")) { state.role = null; render(); return; }
+    if (t.hasAttribute("data-signout")) {
+      state.role = null; state.board = null; render();
+      fetch("/api/logout", { method: "POST" }).catch(function () {});
+      return;
+    }
     if (t.hasAttribute("data-rename")) {
       var rid = Number(t.getAttribute("data-rename"));
       var doc = findDoc(rid);
@@ -795,6 +827,15 @@
   // ---------- Init ----------
   $("#year").textContent = new Date().getFullYear();
   render();
+
+  // Restore an existing session (signed cookie) on load, so a signed-in resident
+  // stays signed in across reloads.
+  fetch("/api/session", { headers: { accept: "application/json" } })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (d && d.role) { state.role = d.role; state.board = d.board || null; render(); }
+    })
+    .catch(function () {});
 })();
 </script>
 </body>

@@ -1,0 +1,11 @@
+{
+  "name": "augustine-place-hoa",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Augustine Place HOA website — static site with Netlify Functions for shared-code resident login.",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0",
+    "@netlify/functions": "^2.8.2"
+  }
+}
