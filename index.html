@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Augustine Place Homeowners Association — Tallahassee, FL</title>
+<meta name="description" content="Augustine Place HOA — a small, self-managed neighborhood in southeast Tallahassee, Florida. Dues, governing documents, meeting dates, and how to reach your board." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Karla:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #F6F1E6;
+    --cream-2: #EFE8D8;
+    --cream-3: #EFE9DA;
+    --green: #1E3B2A;
+    --green-dark: #16301F;
+    --gold: #9A6B24;
+    --gold-lt: #E3BE7C;
+    --gold-md: #C79A4E;
+    --ink: #23291F;
+    --ink-2: #3E4438;
+    --slate: #4A5142;
+    --muted: #7C7259;
+    --muted-2: #6E7565;
+    --red: #A33F2B;
+    --serif: Lora, Georgia, serif;
+    --sans: Karla, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--cream); }
+  body { font-family: var(--sans); color: var(--ink); background: var(--cream); min-height: 100vh; }
+  a { color: var(--green); text-decoration-color: rgba(30,59,42,0.35); text-underline-offset: 3px; }
+  a:hover { color: var(--gold); text-decoration-color: var(--gold); }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 500; }
+  img { max-width: 100%; }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding-left: 32px; padding-right: 32px; }
+  .rule { border-top: 1px solid rgba(30,59,42,0.14); }
+
+  /* ---------- Header ---------- */
+  .site-header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(246,241,230,0.94); backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(30,59,42,0.14);
+  }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 16px; padding-bottom: 16px; }
+  .brand { text-decoration: none; display: flex; align-items: baseline; gap: 10px; }
+  .brand:hover { color: inherit; }
+  .brand-name { font-family: var(--serif); font-size: 19px; font-weight: 600; color: var(--green); letter-spacing: 0.01em; }
+  .brand-tag { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .nav { display: flex; gap: 26px; font-size: 14px; letter-spacing: 0.01em; }
+  .nav a { text-decoration: none; color: var(--slate); }
+  .nav a:hover { color: var(--green); }
+  .header-actions { display: flex; align-items: center; gap: 12px; }
+  .role-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); white-space: nowrap; }
+  .nav-toggle { display: none; background: transparent; border: 1px solid rgba(30,59,42,0.25); color: var(--slate); width: 40px; height: 38px; border-radius: 2px; cursor: pointer; font-size: 18px; line-height: 1; }
+
+  /* ---------- Buttons ---------- */
+  .btn { font-family: var(--sans); cursor: pointer; border-radius: 2px; }
+  .btn-solid { background: var(--green); color: var(--cream); border: 0; padding: 10px 18px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; }
+  .btn-solid:hover { background: var(--green-dark); color: var(--cream); }
+  .btn-ghost { background: transparent; border: 1px solid rgba(30,59,42,0.25); color: var(--slate); padding: 9px 14px; font-size: 13px; }
+  .btn-ghost:hover { border-color: var(--green); color: var(--green); }
+
+  .cta { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 14px 26px; border-radius: 2px; font-size: 15px; font-weight: 500; letter-spacing: 0.01em; }
+  .cta-solid { background: var(--green); color: var(--cream); }
+  .cta-solid:hover { background: var(--green-dark); color: var(--cream); }
+  .cta-outline { border: 1px solid rgba(30,59,42,0.3); color: var(--green); }
+  .cta-outline:hover { border-color: var(--green); background: rgba(30,59,42,0.05); color: var(--green); }
+
+  /* ---------- Hero ---------- */
+  .hero-img-wrap { width: 100%; aspect-ratio: 1605 / 500; max-height: 460px; overflow: hidden; background: var(--cream-2); }
+  .hero-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 62%; display: block; }
+
+  .intro { padding-top: 72px; padding-bottom: 72px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px; }
+  .intro h1 { font-size: 60px; line-height: 1.06; letter-spacing: -0.015em; color: var(--green); margin: 0 0 24px; text-wrap: balance; }
+  .lede { font-size: 18px; line-height: 1.65; color: var(--slate); max-width: 44ch; margin: 0 0 34px; text-wrap: pretty; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .glance { border: 1px solid rgba(30,59,42,0.18); padding: 30px 28px; display: flex; flex-direction: column; gap: 20px; }
+  .glance-title, .kicker { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+  .glance-rows { display: flex; flex-direction: column; gap: 16px; }
+  .glance-row { display: grid; grid-template-columns: 118px 1fr; gap: 16px; align-items: baseline; padding-bottom: 14px; border-bottom: 1px solid rgba(30,59,42,0.12); }
+  .glance-row:last-child { padding-bottom: 0; border-bottom: 0; }
+  .glance-row .k { font-size: 13px; color: var(--muted); letter-spacing: 0.02em; }
+  .glance-row .v { font-size: 15px; line-height: 1.55; color: var(--ink); }
+  .glance-row .v a { font-size: 14px; }
+
+  section { scroll-margin-top: 84px; }
+  .section-pad { padding-top: 76px; padding-bottom: 76px; }
+  .split { display: grid; grid-template-columns: 260px 1fr; gap: 56px; }
+  .section-h { font-size: 30px; line-height: 1.2; color: var(--green); margin: 0; }
+  .section-sub { font-size: 14px; line-height: 1.6; color: var(--muted); margin: 14px 0 0; }
+  .body-p { font-size: 17px; line-height: 1.7; color: var(--ink-2); margin: 0 0 18px; max-width: 62ch; text-wrap: pretty; }
+  .body-p.last { margin-bottom: 32px; }
+
+  /* ---------- About stats ---------- */
+  .statgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(30,59,42,0.16); border: 1px solid rgba(30,59,42,0.16); }
+  .stat { background: var(--cream); padding: 22px 20px; }
+  .stat .big { font-family: var(--serif); font-size: 26px; color: var(--green); }
+  .stat .sm { font-size: 13px; color: var(--muted); margin-top: 6px; letter-spacing: 0.02em; }
+
+  /* ---------- Board ---------- */
+  .band { background: var(--green); color: var(--cream-2); }
+  .band h2 { color: var(--cream); }
+  .board-head { display: flex; align-items: baseline; justify-content: space-between; gap: 32px; margin-bottom: 40px; flex-wrap: wrap; }
+  .board-head h2 { font-size: 34px; margin: 0; }
+  .board-note { font-size: 14px; color: rgba(239,232,216,0.7); margin: 0; max-width: 42ch; line-height: 1.6; }
+  .signin-banner { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: rgba(227,190,124,0.08); border: 1px solid rgba(227,190,124,0.28); color: var(--gold-lt); font-family: var(--sans); font-size: 14px; padding: 14px 18px; margin-bottom: 26px; cursor: pointer; transition: background 130ms ease; }
+  .signin-banner:hover { background: rgba(227,190,124,0.16); }
+  .signin-banner .msg { color: rgba(239,232,216,0.82); line-height: 1.5; }
+  .signin-banner .link { color: var(--gold-lt); border-bottom: 1px solid rgba(227,190,124,0.5); }
+  .board-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1px; }
+  .member { background: var(--green); box-shadow: 0 0 0 1px rgba(239,232,216,0.18); padding: 26px 22px; display: flex; flex-direction: column; gap: 10px; min-height: 190px; }
+  .member .role { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-md); }
+  .member .name { font-family: var(--serif); font-size: 21px; color: var(--cream); line-height: 1.25; }
+  .member .contact { margin-top: auto; display: flex; flex-direction: column; gap: 5px; font-size: 14px; }
+  .member .contact a.email { color: var(--cream-2); text-decoration: none; border-bottom: 1px solid rgba(239,232,216,0.3); padding-bottom: 2px; word-break: break-all; align-self: flex-start; }
+  .member .contact a.email:hover { color: var(--gold-lt); border-color: var(--gold-lt); }
+  .member .contact a.phone { color: rgba(239,232,216,0.75); text-decoration: none; font-variant-numeric: tabular-nums; }
+  .member .contact a.phone:hover { color: var(--gold-lt); }
+  .member .contact .no-email { color: rgba(239,232,216,0.45); padding-bottom: 2px; }
+  .masked-stack { display: grid; }
+  .masked { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 5px; color: rgba(239,232,216,0.28); letter-spacing: 0.08em; user-select: none; }
+  .masked-btn { grid-area: 1 / 1; display: flex; align-items: center; gap: 8px; background: var(--green); border: 0; color: var(--gold-lt); font-family: var(--sans); font-size: 13px; text-align: left; cursor: pointer; opacity: 0; transition: opacity 130ms ease; }
+  .masked-stack:hover .masked-btn { opacity: 1; }
+  .masked-btn span.lbl { border-bottom: 1px solid rgba(227,190,124,0.5); padding-bottom: 1px; }
+
+  /* ---------- Dues ---------- */
+  .duo { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(30,59,42,0.16); border: 1px solid rgba(30,59,42,0.16); margin-bottom: 34px; }
+  .duo .cell { background: var(--cream); padding: 26px 24px; }
+  .duo .cell .lbl { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .duo .cell .num { font-family: var(--serif); font-size: 40px; color: var(--green); line-height: 1; }
+  .duo .cell .fine { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .sub-h { font-family: var(--serif); font-weight: 500; font-size: 20px; color: var(--green); margin: 0 0 18px; }
+  .steps { display: flex; flex-direction: column; gap: 14px; }
+  .step { display: grid; grid-template-columns: 24px 1fr; gap: 16px; align-items: start; padding-bottom: 14px; border-bottom: 1px solid rgba(30,59,42,0.12); }
+  .step:last-child { padding-bottom: 0; border-bottom: 0; }
+  .step .n { font-family: var(--serif); font-size: 15px; color: var(--gold); padding-top: 2px; }
+  .step .t { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+  .step .d { font-size: 15px; line-height: 1.6; color: var(--slate); }
+  .callout { margin-top: 26px; padding: 16px 18px; background: rgba(154,107,36,0.08); border-left: 2px solid var(--gold); font-size: 14px; line-height: 1.6; color: #5A4A2C; }
+
+  /* ---------- Documents ---------- */
+  .tint { background: var(--cream-3); border-top: 1px solid rgba(30,59,42,0.14); border-bottom: 1px solid rgba(30,59,42,0.14); }
+  .doc-list { display: flex; flex-direction: column; }
+  .doc { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; padding: 18px 8px; border-bottom: 1px solid rgba(30,59,42,0.16); }
+  .doc:hover { background: rgba(30,59,42,0.045); }
+  .doc .title-row { display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
+  .doc .lock { font-size: 12px; color: var(--gold); }
+  .doc .title { font-family: var(--serif); font-size: 20px; color: var(--green); }
+  .doc .note { font-size: 14px; color: var(--muted-2); line-height: 1.55; }
+  .doc-actions { display: flex; align-items: center; gap: 14px; }
+  .edit-btns { display: flex; gap: 8px; }
+  .mini-btn { background: transparent; border: 1px solid rgba(30,59,42,0.25); color: var(--slate); padding: 7px 12px; font-family: var(--sans); font-size: 12px; cursor: pointer; }
+  .mini-btn:hover { border-color: var(--green); color: var(--green); }
+  .mini-btn.danger:hover { border-color: var(--red); color: var(--red); }
+  .doc-meta-stack { display: grid; justify-items: end; }
+  .doc-meta { grid-area: 1 / 1; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(110,117,101,0.55); white-space: nowrap; }
+  .doc-signin { grid-area: 1 / 1; background: var(--cream-3); border: 0; padding: 0; color: var(--gold); font-family: var(--sans); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; white-space: nowrap; opacity: 0; transition: opacity 130ms ease; }
+  .doc-meta-stack:hover .doc-signin { opacity: 1; }
+  .doc-dl { text-decoration: none; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); white-space: nowrap; border-bottom: 1px solid rgba(154,107,36,0.4); padding-bottom: 2px; }
+  .doc-dl:hover { color: var(--green); border-color: var(--green); }
+  .dropzone { margin-top: 20px; border: 2px dashed rgba(30,59,42,0.28); background: transparent; padding: 34px 24px; text-align: center; transition: background 120ms ease, border-color 120ms ease; }
+  .dropzone.drag { border-color: var(--green); background: rgba(30,59,42,0.08); }
+  .dropzone .dz-title { font-family: var(--serif); font-size: 19px; color: var(--green); margin-bottom: 6px; }
+  .dropzone .dz-sub { font-size: 14px; color: var(--muted-2); }
+  .dropzone .dz-browse { color: var(--gold); text-decoration: underline; cursor: pointer; }
+  .docs-note { font-size: 14px; line-height: 1.6; color: var(--muted-2); margin: 22px 0 0; }
+
+  /* ---------- Meetings ---------- */
+  .next-meeting { border: 1px solid rgba(30,59,42,0.16); padding: 28px 26px; margin-bottom: 30px; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+  .next-meeting .date { font-family: var(--serif); font-size: 28px; color: var(--green); line-height: 1.25; margin-bottom: 6px; }
+  .next-meeting .where { font-size: 15px; color: var(--slate); }
+  .meeting-actions { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+  .join { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 12px 22px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .join.active { background: var(--green); color: var(--cream); }
+  .join.active:hover { background: var(--green-dark); color: var(--cream); }
+  .join-stack { display: grid; }
+  .join.disabled { grid-area: 1 / 1; border: 1px solid rgba(30,59,42,0.18); color: rgba(110,117,101,0.65); }
+  .join-signin { grid-area: 1 / 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--green); border: 0; color: var(--cream); padding: 12px 22px; font-family: var(--sans); font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; opacity: 0; transition: opacity 130ms ease; }
+  .join-stack:hover .join-signin { opacity: 1; }
+  .agenda-link { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(30,59,42,0.3); color: var(--green); padding: 12px 22px; font-size: 14px; font-weight: 500; white-space: nowrap; }
+  .agenda-link:hover { background: rgba(30,59,42,0.06); color: var(--green); }
+  .minute { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: baseline; padding: 16px 4px; border-bottom: 1px solid rgba(30,59,42,0.12); }
+  .minute .m-title { font-size: 16px; color: var(--ink); }
+  .min-stack { display: grid; justify-items: end; }
+  .min-meta { grid-area: 1 / 1; font-size: 13px; color: rgba(110,117,101,0.55); letter-spacing: 0.04em; white-space: nowrap; }
+  .min-signin { grid-area: 1 / 1; background: var(--cream); border: 0; padding: 0; font-family: var(--sans); font-size: 13px; color: var(--gold); letter-spacing: 0.04em; white-space: nowrap; cursor: pointer; opacity: 0; transition: opacity 130ms ease; }
+  .min-stack:hover .min-signin { opacity: 1; }
+  .min-dl { font-size: 13px; color: var(--gold); letter-spacing: 0.04em; white-space: nowrap; text-decoration: none; border-bottom: 1px solid rgba(154,107,36,0.4); }
+  .min-dl:hover { color: var(--green); border-color: var(--green); }
+
+  /* ---------- Contact ---------- */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; }
+  .contact-grid h2 { font-size: 34px; margin: 0 0 18px; line-height: 1.15; }
+  .contact-lede { font-size: 16px; line-height: 1.7; color: rgba(239,232,216,0.78); margin: 0 0 34px; max-width: 40ch; text-wrap: pretty; }
+  .contact-block + .contact-block { margin-top: 22px; }
+  .contact-block .lbl { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-md); margin-bottom: 8px; }
+  .contact-block .val { font-size: 16px; line-height: 1.6; color: var(--cream-2); }
+  .contact-block .val a { color: var(--cream-2); text-decoration: none; border-bottom: 1px solid rgba(239,232,216,0.3); }
+  .contact-block .val a:hover { color: var(--gold-lt); border-color: var(--gold-lt); }
+  .contact-form { display: flex; flex-direction: column; gap: 18px; background: rgba(246,241,230,0.06); border: 1px solid rgba(239,232,216,0.18); padding: 32px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field > span { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(239,232,216,0.65); }
+  .field input, .field textarea, .field select { background: transparent; border: 0; border-bottom: 1px solid rgba(239,232,216,0.35); color: var(--cream); font-family: var(--sans); font-size: 16px; padding: 9px 0; outline: none; }
+  .field textarea { resize: vertical; }
+  .field select { background: var(--green); }
+  .field select option { color: var(--ink); }
+  .field input:focus, .field textarea:focus, .field select:focus { border-bottom-color: var(--gold-lt); }
+  .submit { margin-top: 6px; background: var(--gold-lt); color: var(--green); border: 0; padding: 15px 26px; font-family: var(--sans); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; align-self: flex-start; }
+  .submit:hover { background: var(--cream); }
+  .submit:disabled { cursor: default; opacity: 0.85; }
+  .form-note { font-size: 13px; color: rgba(239,232,216,0.55); line-height: 1.6; }
+
+  /* ---------- Sign-in modal ---------- */
+  .overlay { position: fixed; inset: 0; z-index: 60; background: rgba(22,48,31,0.55); display: flex; align-items: flex-start; justify-content: center; padding: 24px; overflow: auto; }
+  .overlay[hidden] { display: none; }
+  .modal { background: var(--cream); width: 100%; max-width: 440px; margin: auto; padding: 38px 36px; border: 1px solid rgba(30,59,42,0.2); box-shadow: 0 24px 60px rgba(22,48,31,0.3); }
+  .modal .kick { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+  .modal h3 { font-size: 28px; color: var(--green); margin: 0 0 12px; line-height: 1.2; }
+  .modal p { font-size: 15px; line-height: 1.6; color: var(--slate); margin: 0 0 26px; }
+  .modal form { display: flex; flex-direction: column; gap: 20px; }
+  .modal .field > span { color: var(--muted); }
+  .modal .field input { color: var(--ink); border-bottom: 1px solid rgba(30,59,42,0.3); }
+  .modal .field input:focus { border-bottom-color: var(--green); }
+  .modal .signin-error { font-size: 14px; color: var(--red); }
+  .modal .signin-error[hidden] { display: none; }
+  .modal .submit-dark { background: var(--green); color: var(--cream); border: 0; padding: 14px 24px; font-family: var(--sans); font-size: 15px; font-weight: 600; cursor: pointer; }
+  .modal .submit-dark:hover { background: var(--green-dark); }
+  .modal .demo { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(30,59,42,0.14); font-size: 13px; line-height: 1.6; color: var(--muted); }
+
+  /* ---------- Footer ---------- */
+  .site-footer { background: var(--green-dark); color: rgba(239,232,216,0.6); }
+  .footer-inner { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center; font-size: 13px; padding-top: 34px; padding-bottom: 34px; }
+
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  [hidden] { display: none !important; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    .wrap { padding-left: 22px; padding-right: 22px; }
+    .nav { display: none; }
+    .nav.open { display: flex; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; gap: 0; background: var(--cream); border-bottom: 1px solid rgba(30,59,42,0.14); padding: 8px 22px 16px; }
+    .nav.open a { padding: 12px 0; border-bottom: 1px solid rgba(30,59,42,0.08); }
+    .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+    .site-header { position: sticky; }
+    .header-inner { position: relative; }
+    .intro { grid-template-columns: 1fr; gap: 36px; padding-top: 48px; padding-bottom: 48px; }
+    .intro h1 { font-size: 42px; }
+    .split { grid-template-columns: 1fr; gap: 28px; }
+    .section-pad { padding-top: 52px; padding-bottom: 52px; }
+    .statgrid { grid-template-columns: 1fr; }
+    .duo { grid-template-columns: 1fr; }
+    .next-meeting { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    .field-row { grid-template-columns: 1fr; }
+    .board-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .intro h1 { font-size: 34px; }
+    .glance-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+  @media print { .no-print { display: none !important; } }
+</style>
+</head>
+<body>
+
+  <header class="site-header no-print">
+    <div class="wrap header-inner">
+      <a href="#top" class="brand">
+        <span class="brand-name">Augustine Place</span>
+        <span class="brand-tag">HOA</span>
+      </a>
+      <nav class="nav" id="nav">
+        <a href="#about">About</a>
+        <a href="#board">Board</a>
+        <a href="#dues">Dues</a>
+        <a href="#documents">Documents</a>
+        <a href="#meetings">Meetings</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
+        <button class="btn btn-solid" data-open-signin data-when="signedOut">Resident sign in</button>
+        <span class="role-label" data-when="signedIn" data-role-label hidden></span>
+        <button class="btn btn-ghost" data-signout data-when="signedIn" hidden>Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="top" class="hero-img-wrap">
+    <img src="uploads/entrance-sign.png" alt="Augustine Place entrance sign and neighborhood street" />
+  </div>
+
+  <section class="wrap intro">
+    <div>
+      <div class="eyebrow">Tallahassee, Florida</div>
+      <h1>Augustine Place<br />Homeowners Association</h1>
+      <p class="lede">A small, close-knit neighborhood run by the people who live in it. Everything a resident needs — dues, documents, meeting dates, and how to reach your board — is on this page.</p>
+      <div class="cta-row">
+        <a href="#dues" class="cta cta-solid">Pay your dues</a>
+        <a href="#documents" class="cta cta-outline">Governing documents</a>
+      </div>
+    </div>
+    <div class="glance">
+      <div class="glance-title">At a glance</div>
+      <div class="glance-rows">
+        <div class="glance-row">
+          <span class="k">Mailing address</span>
+          <span class="v">1563 Capital Cir SE, Box 386<br />Tallahassee, FL 32301</span>
+        </div>
+        <div class="glance-row">
+          <span class="k">President</span>
+          <span class="v">Jacqueline Roumou<br /><a href="mailto:Jackie.roumou@gmail.com">Jackie.roumou@gmail.com</a></span>
+        </div>
+        <div class="glance-row">
+          <span class="k">Management</span>
+          <span class="v">Self-managed by resident volunteers</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <section id="about" class="wrap section-pad">
+    <div class="split">
+      <h2 class="section-h">Welcome to the neighborhood</h2>
+      <div>
+        <p class="body-p">Augustine Place is a small residential community in southeast Tallahassee. The association exists for one reason: to keep the neighborhood well cared for, its shared areas maintained, and its property values steady — without a management company between neighbors and decisions.</p>
+        <p class="body-p last">Every homeowner is a member. The board is made up of five volunteers who live here, and any resident is welcome at board meetings. If something needs attention — a shared-area repair, a rules question, a change you're planning to your home — start by reaching out.</p>
+        <div class="statgrid">
+          <div class="stat"><div class="big">Self-managed</div><div class="sm">Run by resident volunteers</div></div>
+          <div class="stat"><div class="big">5 board seats</div><div class="sm">Elected at the annual meeting</div></div>
+          <div class="stat"><div class="big">Open meetings</div><div class="sm">All homeowners welcome</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="board" class="band">
+    <div class="wrap section-pad">
+      <div class="board-head">
+        <h2>Your board of directors</h2>
+        <p class="board-note">Reach out to any board member directly, or use the contact form below and it will find the right person.</p>
+      </div>
+      <button class="signin-banner" data-open-signin data-when="signedOut">
+        <span>🔒</span>
+        <span class="msg">Emails and phone numbers are hidden from the public web. <span class="link">Sign in as a homeowner</span> to reveal them.</span>
+      </button>
+      <div class="board-grid" id="boardGrid"></div>
+    </div>
+  </section>
+
+  <section id="dues" class="wrap section-pad">
+    <div class="split">
+      <div>
+        <h2 class="section-h">Dues &amp; payments</h2>
+        <p class="section-sub">Assessments fund insurance, shared-area upkeep, and the reserve fund.</p>
+      </div>
+      <div>
+        <div class="duo">
+          <div class="cell">
+            <div class="lbl">Annual assessment</div>
+            <div class="num">$—</div>
+            <div class="fine">per household — confirm amount</div>
+          </div>
+          <div class="cell">
+            <div class="lbl">Due date</div>
+            <div class="num">Jan 1</div>
+            <div class="fine">late after 30 days — confirm</div>
+          </div>
+        </div>
+        <h3 class="sub-h">How to pay</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="n">01</div>
+            <div>
+              <div class="t">By check, mailed to the association</div>
+              <div class="d">Make checks payable to <em>Augustine Place HOA</em> and mail to 1563 Capital Cir SE, Box 386, Tallahassee, FL 32301. Write your property address in the memo line.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="n">02</div>
+            <div>
+              <div class="t">Electronically</div>
+              <div class="d">Contact the treasurer, Gregory Smith, for current electronic payment options.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="n">03</div>
+            <div>
+              <div class="t">Need a payment plan?</div>
+              <div class="d">Reach the treasurer before your account goes delinquent. The board would far rather work something out than send a notice.</div>
+            </div>
+          </div>
+        </div>
+        <div class="callout">Dollar amounts and dates above are placeholders — send me the real figures and I'll drop them in.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="documents" class="tint">
+    <div class="wrap section-pad">
+      <div class="split">
+        <div>
+          <h2 class="section-h">Governing documents</h2>
+          <p class="section-sub">The rules every homeowner agreed to at closing. Worth a read before you build, paint, or park.</p>
+        </div>
+        <div>
+          <div class="doc-list" id="docList"></div>
+          <div class="dropzone" id="dropzone" data-when="isAdmin" hidden>
+            <div class="dz-title">Drag PDFs here to add them</div>
+            <div class="dz-sub">Board members only. Dropped files appear in the list above and can be renamed or removed. <span class="dz-browse" id="browse">or browse</span>.</div>
+            <input type="file" id="fileInput" accept="application/pdf,.pdf" multiple class="visually-hidden" />
+          </div>
+          <p class="docs-note" id="docsNote"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="meetings" class="wrap section-pad">
+    <div class="split">
+      <div>
+        <h2 class="section-h">Meetings &amp; minutes</h2>
+        <p class="section-sub">Open to all homeowners. Notice is posted at least 48 hours in advance.</p>
+      </div>
+      <div>
+        <div class="next-meeting">
+          <div>
+            <div class="kicker">Next meeting</div>
+            <div class="date">Date to be announced</div>
+            <div class="where">Location and agenda will be posted here and emailed to homeowners.</div>
+          </div>
+          <div class="meeting-actions">
+            <a href="#meetings" class="join active" data-when="signedIn" hidden>Join the meeting</a>
+            <div class="join-stack" data-when="signedOut">
+              <span class="join disabled">Join the meeting</span>
+              <button class="join-signin" data-open-signin>🔒 Sign in to join</button>
+            </div>
+            <a href="#contact" class="agenda-link">Add an agenda item</a>
+          </div>
+        </div>
+        <h3 class="sub-h" style="margin-bottom:4px;">Past minutes</h3>
+        <div id="minutesList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="band">
+    <div class="wrap section-pad contact-grid">
+      <div>
+        <h2>Get in touch</h2>
+        <p class="contact-lede">Maintenance concerns, rules questions, architectural requests, or anything else — send a note and a board member will get back to you.</p>
+        <div class="contact-block">
+          <div class="lbl">Mailing address</div>
+          <div class="val">Augustine Place HOA<br />1563 Capital Cir SE, Box 386<br />Tallahassee, FL 32301</div>
+        </div>
+        <div class="contact-block">
+          <div class="lbl">President</div>
+          <div class="val">Jacqueline Roumou<br /><a href="mailto:Jackie.roumou@gmail.com">Jackie.roumou@gmail.com</a></div>
+        </div>
+      </div>
+      <form class="contact-form" id="contactForm">
+        <div class="field-row">
+          <label class="field">
+            <span>Name</span>
+            <input type="text" name="name" required />
+          </label>
+          <label class="field">
+            <span>Property address</span>
+            <input type="text" name="address" />
+          </label>
+        </div>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" required />
+        </label>
+        <label class="field">
+          <span>Topic</span>
+          <select name="topic">
+            <option>General question</option>
+            <option>Dues or payment</option>
+            <option>Maintenance or shared areas</option>
+            <option>Architectural request</option>
+            <option>Rules concern</option>
+            <option>Documents request</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Message</span>
+          <textarea name="message" rows="4" required></textarea>
+        </label>
+        <button type="submit" class="submit" id="submitBtn">Send message</button>
+        <div class="form-note" id="formNote">This form isn't connected to email yet. Until it is, write to the board member listed above.</div>
+      </form>
+    </div>
+  </section>
+
+  <div class="overlay no-print" id="signInOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="signInTitle">
+      <div class="kick">Homeowners only</div>
+      <h3 id="signInTitle">Sign in</h3>
+      <p>Enter the email on file with the association. Contact details, documents, and meeting links unlock once you're verified.</p>
+      <form id="signInForm">
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" required />
+        </label>
+        <label class="field">
+          <span>Access code</span>
+          <input type="password" name="code" required />
+        </label>
+        <div class="signin-error" id="signInError" hidden></div>
+        <button type="submit" class="submit-dark">Sign in</button>
+      </form>
+      <div class="demo">Demo: code <strong>resident</strong> for homeowner access, <strong>board</strong> for board-member access. The live site will send a one-time code by email instead.</div>
+    </div>
+  </div>
+
+  <footer class="site-footer no-print">
+    <div class="wrap footer-inner">
+      <div>© <span id="year"></span> Augustine Place Homeowners Association · Tallahassee, FL</div>
+      <div style="letter-spacing:0.04em;">augustineplacehoa.com</div>
+    </div>
+  </footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Data ----------
+  var BOARD = [
+    { role: "President",      name: "Jacqueline Roumou", email: "Jackie.roumou@gmail.com",      phone: "850-294-3626" },
+    { role: "Vice President", name: "Beverly Fierro",    email: "Beverly.fierro@bsssalem.com", phone: "850-868-0947" },
+    { role: "Treasurer",      name: "Gregory Smith",     email: "greggsmith80@gmail.com",       phone: "850-264-4182" },
+    { role: "Secretary",      name: "Gayla Parks",       email: "gparks1207@gmail.com",         phone: "850-566-4741" },
+    { role: "Member at Large",name: "Sean Hagan",        email: "",                             phone: "732-778-7986" },
+  ];
+
+  var MINUTES = [
+    { title: "Annual Meeting — minutes", meta: "Download PDF", href: "#meetings" },
+    { title: "Board Meeting — minutes",  meta: "Download PDF", href: "#meetings" },
+  ];
+
+  // ---------- State ----------
+  var state = {
+    role: null,        // null | "resident" | "admin"
+    signInOpen: false,
+    dragging: false,
+    sent: false,
+    docs: [
+      { id: 1, title: "Declaration of Covenants, Conditions & Restrictions", note: "The recorded CC&Rs governing the property.", meta: "PDF" },
+      { id: 2, title: "Bylaws", note: "How the association and its board operate.", meta: "PDF" },
+      { id: 3, title: "Rules & Regulations", note: "Parking, pets, trash, noise, and shared-area use.", meta: "PDF" },
+      { id: 4, title: "Architectural Guidelines", note: "Read before any exterior change — approval is required.", meta: "PDF" },
+      { id: 5, title: "Annual Budget", note: "Where your assessments go.", meta: "PDF" },
+    ],
+  };
+
+  var $ = function (sel, root) { return (root || document).querySelector(sel); };
+  var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function telHref(phone) { return "tel:+1" + phone.replace(/\D/g, ""); }
+
+  // ---------- Derived ----------
+  function signedIn() { return state.role === "resident" || state.role === "admin"; }
+  function isAdmin() { return state.role === "admin"; }
+
+  // ---------- Render ----------
+  function renderVisibility() {
+    var si = signedIn(), admin = isAdmin();
+    $$("[data-when]").forEach(function (el) {
+      var cond = el.getAttribute("data-when");
+      var show = cond === "signedIn" ? si : cond === "signedOut" ? !si : cond === "isAdmin" ? admin : true;
+      el.hidden = !show;
+    });
+    var label = $("[data-role-label]");
+    if (label) label.textContent = admin ? "Board member" : "Homeowner";
+  }
+
+  function renderBoard() {
+    var si = signedIn();
+    var grid = $("#boardGrid");
+    grid.innerHTML = BOARD.map(function (m) {
+      var contact;
+      if (si) {
+        var emailLine = m.email
+          ? '<a class="email" href="mailto:' + esc(m.email) + '">' + esc(m.email) + '</a>'
+          : '<span class="no-email">Reach by phone</span>';
+        var phoneLine = m.phone
+          ? '<a class="phone" href="' + telHref(m.phone) + '">' + esc(m.phone) + '</a>'
+          : '';
+        contact = emailLine + phoneLine;
+      } else {
+        var maskedEmail = m.email ? "••••••••@•••••.com" : "—";
+        contact =
+          '<div class="masked-stack">' +
+            '<div class="masked"><span>' + maskedEmail + '</span><span>•••-•••-••••</span></div>' +
+            '<button class="masked-btn" data-open-signin type="button">' +
+              '<span style="font-size:12px;">🔒</span>' +
+              '<span class="lbl">Sign in to view contact</span>' +
+            '</button>' +
+          '</div>';
+      }
+      return (
+        '<div class="member">' +
+          '<div class="role">' + esc(m.role) + '</div>' +
+          '<div class="name">' + esc(m.name) + '</div>' +
+          '<div class="contact">' + contact + '</div>' +
+        '</div>'
+      );
+    }).join("");
+  }
+
+  function renderDocs() {
+    var si = signedIn(), admin = isAdmin();
+    var list = $("#docList");
+    list.innerHTML = state.docs.map(function (d) {
+      var left =
+        '<div>' +
+          '<div class="title-row">' +
+            (!si ? '<span class="lock">🔒</span>' : '') +
+            '<span class="title">' + esc(d.title) + '</span>' +
+          '</div>' +
+          '<div class="note">' + esc(d.note) + '</div>' +
+        '</div>';
+
+      var editBtns = admin
+        ? '<div class="edit-btns">' +
+            '<button class="mini-btn" type="button" data-rename="' + d.id + '">Rename</button>' +
+            '<button class="mini-btn danger" type="button" data-delete="' + d.id + '">Delete</button>' +
+          '</div>'
+        : '';
+
+      var access = si
+        ? '<a class="doc-dl" href="#documents">Download ' + esc(d.meta) + '</a>'
+        : '<div class="doc-meta-stack">' +
+            '<span class="doc-meta">' + esc(d.meta) + '</span>' +
+            '<button class="doc-signin" type="button" data-open-signin>Sign in to download</button>' +
+          '</div>';
+
+      return (
+        '<div class="doc">' + left +
+          '<div class="doc-actions">' + editBtns + access + '</div>' +
+        '</div>'
+      );
+    }).join("");
+
+    $("#docsNote").textContent = admin
+      ? "Changes here are a working prototype — on the live site, uploads save to the association's file storage. Estoppel requests should go to the treasurer."
+      : "Realtors and title companies requesting an estoppel letter should contact the treasurer.";
+  }
+
+  function renderMinutes() {
+    var si = signedIn();
+    var list = $("#minutesList");
+    list.innerHTML = MINUTES.map(function (mi) {
+      var right = si
+        ? '<a class="min-dl" href="' + mi.href + '">' + esc(mi.meta) + '</a>'
+        : '<div class="min-stack">' +
+            '<span class="min-meta">' + esc(mi.meta) + '</span>' +
+            '<button class="min-signin" type="button" data-open-signin>Sign in to download</button>' +
+          '</div>';
+      return '<div class="minute"><span class="m-title">' + esc(mi.title) + '</span>' + right + '</div>';
+    }).join("");
+  }
+
+  function render() {
+    renderVisibility();
+    renderBoard();
+    renderDocs();
+    renderMinutes();
+  }
+
+  // ---------- Sign-in modal ----------
+  var overlay = $("#signInOverlay");
+  var signInError = $("#signInError");
+
+  function openSignIn() {
+    state.signInOpen = true;
+    signInError.hidden = true;
+    signInError.textContent = "";
+    overlay.hidden = false;
+    var input = overlay.querySelector('input[name="email"]');
+    if (input) input.focus();
+  }
+  function closeSignIn() {
+    state.signInOpen = false;
+    overlay.hidden = true;
+    $("#signInForm").reset();
+    signInError.hidden = true;
+  }
+
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeSignIn(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && state.signInOpen) closeSignIn(); });
+
+  $("#signInForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var code = (new FormData(e.target).get("code") || "").toString().trim().toLowerCase();
+    if (code === "board") { state.role = "admin"; closeSignIn(); render(); }
+    else if (code === "resident") { state.role = "resident"; closeSignIn(); render(); }
+    else { signInError.textContent = 'That code isn’t recognized. Try “resident” or “board”.'; signInError.hidden = false; }
+  });
+
+  // Global delegated click handling
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest ? e.target.closest("[data-open-signin],[data-signout],[data-rename],[data-delete]") : null;
+    if (!t) return;
+    if (t.hasAttribute("data-open-signin")) { e.preventDefault(); openSignIn(); return; }
+    if (t.hasAttribute("data-signout")) { state.role = null; render(); return; }
+    if (t.hasAttribute("data-rename")) {
+      var rid = Number(t.getAttribute("data-rename"));
+      var doc = findDoc(rid);
+      if (!doc) return;
+      var next = window.prompt("Document name", doc.title);
+      if (next && next.trim()) { doc.title = next.trim(); renderDocs(); }
+      return;
+    }
+    if (t.hasAttribute("data-delete")) {
+      var did = Number(t.getAttribute("data-delete"));
+      var d = findDoc(did);
+      if (!d) return;
+      if (window.confirm("Remove “" + d.title + "” from the documents list?")) {
+        state.docs = state.docs.filter(function (x) { return x.id !== did; });
+        renderDocs();
+      }
+      return;
+    }
+  });
+
+  function findDoc(id) {
+    for (var i = 0; i < state.docs.length; i++) if (state.docs[i].id === id) return state.docs[i];
+    return null;
+  }
+
+  // ---------- Documents: uploads (admin) ----------
+  function addFiles(fileList) {
+    var files = Array.prototype.slice.call(fileList || []).filter(function (f) { return f && f.name; });
+    if (!files.length) return;
+    var base = Date.now();
+    files.forEach(function (f, i) {
+      state.docs.push({
+        id: base + i,
+        title: f.name.replace(/\.[^.]+$/, ""),
+        note: "Uploaded just now — click Rename to give it a clearer title.",
+        meta: (f.name.split(".").pop() || "file").toUpperCase(),
+      });
+    });
+    state.dragging = false;
+    renderDocs();
+  }
+
+  var dropzone = $("#dropzone");
+  var fileInput = $("#fileInput");
+  dropzone.addEventListener("dragover", function (e) { e.preventDefault(); dropzone.classList.add("drag"); });
+  dropzone.addEventListener("dragleave", function () { dropzone.classList.remove("drag"); });
+  dropzone.addEventListener("drop", function (e) {
+    e.preventDefault();
+    dropzone.classList.remove("drag");
+    addFiles(e.dataTransfer && e.dataTransfer.files);
+  });
+  $("#browse").addEventListener("click", function () { fileInput.click(); });
+  fileInput.addEventListener("change", function () { addFiles(fileInput.files); fileInput.value = ""; });
+
+  // ---------- Contact form ----------
+  $("#contactForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    state.sent = true;
+    $("#submitBtn").textContent = "Message sent";
+    $("#submitBtn").disabled = true;
+    $("#formNote").textContent = "Thanks — a board member will follow up. (Demo form: not yet connected to email.)";
+  });
+
+  // ---------- Mobile nav ----------
+  var navToggle = $("#navToggle"), nav = $("#nav");
+  navToggle.addEventListener("click", function () {
+    var open = nav.classList.toggle("open");
+    navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  nav.addEventListener("click", function (e) {
+    if (e.target.tagName === "A") { nav.classList.remove("open"); navToggle.setAttribute("aria-expanded", "false"); }
+  });
+
+  // ---------- Init ----------
+  $("#year").textContent = new Date().getFullYear();
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Local tooling
+.claude/
+.netlify/
+
+# Source / build archives (not part of the deployed site)
+*.zip
+
+# OS cruft
+Thumbs.db
+.DS_Store
