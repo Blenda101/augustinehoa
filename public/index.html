@@ -255,7 +255,16 @@
   .admin-status { font-size: 13px; color: var(--gold); min-height: 1.2em; }
   .admin-field select { background: var(--cream); border: 1px solid rgba(30,59,42,0.25); color: var(--ink); font-family: var(--sans); font-size: 15px; padding: 9px 11px; outline: none; border-radius: 2px; width: 100%; }
   .admin-field select:focus { border-color: var(--green); }
+  .admin-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
   @media (max-width: 520px) { .admin-row2 { grid-template-columns: 1fr; } }
+
+  /* Collapsed editor triggers */
+  .panel-toggle { margin-top: 20px; width: 100%; text-align: left; background: transparent; border: 1px dashed rgba(30,59,42,0.4); color: var(--green); font-family: var(--sans); font-size: 14px; font-weight: 600; padding: 12px 18px; cursor: pointer; border-radius: 2px; transition: background 120ms ease, border-color 120ms ease; }
+  .panel-toggle:hover { background: rgba(30,59,42,0.05); border-color: var(--green); }
+  .panel-toggle.on-dark { border-color: rgba(239,232,216,0.35); color: var(--gold-lt); }
+  .panel-toggle.on-dark:hover { background: rgba(246,241,230,0.06); border-color: var(--gold-lt); }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .admin-add { animation: panelIn 140ms ease; }
 
   /* Admin panel on the dark board section */
   .admin-add.on-dark { border-color: rgba(239,232,216,0.28); background: rgba(246,241,230,0.06); }
@@ -398,7 +407,7 @@
         <span class="msg">Emails and phone numbers are hidden from the public web. <span class="link">Sign in as a homeowner</span> to reveal them.</span>
       </button>
       <div class="board-grid" id="boardGrid"></div>
-      <div class="admin-add on-dark" id="boardAdmin" hidden></div>
+      <div id="boardAdmin" hidden></div>
     </div>
   </section>
 
@@ -459,7 +468,7 @@
         </div>
         <div>
           <div class="doc-list" id="docList"></div>
-          <div class="admin-add" id="docsAdmin" hidden></div>
+          <div id="docsAdmin" hidden></div>
           <p class="docs-note" id="docsNote"></p>
         </div>
       </div>
@@ -484,10 +493,10 @@
             <a href="#contact" class="agenda-link">Add an agenda item</a>
           </div>
         </div>
-        <div class="admin-add" id="meetingAdmin" hidden></div>
+        <div id="meetingAdmin" hidden></div>
         <h3 class="sub-h" style="margin: 0 0 4px;">Past minutes</h3>
         <div id="minutesList"></div>
-        <div class="admin-add" id="minutesAdmin" hidden></div>
+        <div id="minutesAdmin" hidden></div>
       </div>
     </div>
   </section>
@@ -500,7 +509,7 @@
       </div>
       <div>
         <div id="homeownersTable"></div>
-        <div class="admin-add" id="homeownersAdmin"></div>
+        <div id="homeownersAdmin"></div>
         <div id="signinsPanel"></div>
       </div>
     </div>
@@ -596,6 +605,9 @@
     role: null,        // null | "resident" | "admin"
     content: null,     // { board, meeting, documents, minutes, isAdmin, homeowners? }
     editingHomeowner: null,
+    // Which admin editors are expanded. Collapsed by default so the board view
+    // stays clean; each opens on demand.
+    panels: { docs: false, minutes: false, meeting: false, board: false, homeowner: false },
     signInOpen: false,
     sent: false,
   };
@@ -787,11 +799,28 @@
   }
 
   // ---------- Admin editors ----------
+  // Collapsed by default (just a trigger button); expands to the form on demand.
+  function adminPanel(key, onDark, triggerLabel, formHtml) {
+    var dark = onDark ? " on-dark" : "";
+    if (!state.panels[key]) {
+      return '<button class="panel-toggle' + dark + '" type="button" data-toggle-panel="' + key + '">' + triggerLabel + '</button>';
+    }
+    return '<div class="admin-add' + dark + '">' + formHtml + '</div>';
+  }
+
+  function panelActions(submitLabel, panelKey) {
+    return '<div class="admin-actions">' +
+      '<button class="admin-btn" type="submit">' + submitLabel + '</button>' +
+      '<button class="mini-btn" type="button" data-toggle-panel="' + panelKey + '">Cancel</button>' +
+      '<span class="admin-status" data-status></span>' +
+    '</div>';
+  }
+
   function renderDocsAdmin() {
     var box = $("#docsAdmin");
     if (!isAdmin()) { box.hidden = true; box.innerHTML = ""; return; }
     box.hidden = false;
-    box.innerHTML =
+    var form =
       '<div class="admin-badge">🔧 Board tools</div>' +
       '<h4>Add a document</h4>' +
       '<p class="hint">Paste a share link (Google Drive, Dropbox…). It appears above and is downloadable by signed-in homeowners.</p>' +
@@ -799,16 +828,16 @@
         '<div class="admin-field"><label>Title</label><input name="title" required placeholder="e.g. 2026 Annual Budget" /></div>' +
         '<div class="admin-field"><label>Description</label><input name="note" placeholder="Short description (optional)" /></div>' +
         '<div class="admin-field"><label>Link (URL)</label><input name="url" type="url" required placeholder="https://…" /></div>' +
-        '<button class="admin-btn" type="submit">Add document</button>' +
-        '<div class="admin-status" data-status></div>' +
+        panelActions("Add document", "docs") +
       '</form>';
+    box.innerHTML = adminPanel("docs", false, "+ Add a document", form);
   }
 
   function renderMinutesAdmin() {
     var box = $("#minutesAdmin");
     if (!isAdmin()) { box.hidden = true; box.innerHTML = ""; return; }
     box.hidden = false;
-    box.innerHTML =
+    var form =
       '<div class="admin-badge">🔧 Board tools</div>' +
       '<h4>Add meeting minutes</h4>' +
       '<p class="hint">Paste a link to the minutes document. Visible to signed-in homeowners.</p>' +
@@ -817,9 +846,9 @@
           '<div class="admin-field"><label>Title</label><input name="title" required placeholder="e.g. Board Meeting — Aug 2026" /></div>' +
           '<div class="admin-field"><label>Link (URL)</label><input name="url" type="url" required placeholder="https://…" /></div>' +
         '</div>' +
-        '<button class="admin-btn" type="submit">Add minutes</button>' +
-        '<div class="admin-status" data-status></div>' +
+        panelActions("Add minutes", "minutes") +
       '</form>';
+    box.innerHTML = adminPanel("minutes", false, "+ Add meeting minutes", form);
   }
 
   function renderMeetingAdmin() {
@@ -827,7 +856,7 @@
     if (!isAdmin()) { box.hidden = true; box.innerHTML = ""; return; }
     var m = content().meeting;
     box.hidden = false;
-    box.innerHTML =
+    var form =
       '<div class="admin-badge">🔧 Board tools</div>' +
       '<h4>Edit next meeting</h4>' +
       '<p class="hint">Set the date, location, and a join link (Zoom, Google Meet…). The join link is shown only to signed-in homeowners.</p>' +
@@ -837,9 +866,9 @@
           '<div class="admin-field"><label>Join link (URL)</label><input name="link" type="url" value="' + esc(m.link || "") + '" placeholder="https://…" /></div>' +
         '</div>' +
         '<div class="admin-field"><label>Location / details</label><textarea name="location" rows="2" placeholder="Address or note">' + esc(m.location || "") + '</textarea></div>' +
-        '<button class="admin-btn" type="submit">Save meeting</button>' +
-        '<div class="admin-status" data-status></div>' +
+        panelActions("Save meeting", "meeting") +
       '</form>';
+    box.innerHTML = adminPanel("meeting", false, "Edit next meeting", form);
   }
 
   function renderBoardAdmin() {
@@ -847,7 +876,7 @@
     if (!box) return;
     if (!isAdmin()) { box.hidden = true; box.innerHTML = ""; return; }
     box.hidden = false;
-    box.innerHTML =
+    var form =
       '<div class="admin-badge">🔧 Board tools</div>' +
       '<h4>Add a board member</h4>' +
       '<p class="hint">Name and role are public. Email and phone show only to signed-in homeowners.</p>' +
@@ -860,9 +889,9 @@
           '<div class="admin-field"><label>Email</label><input name="email" type="email" placeholder="name@example.com" /></div>' +
           '<div class="admin-field"><label>Phone</label><input name="phone" placeholder="850-555-1234" /></div>' +
         '</div>' +
-        '<button class="admin-btn" type="submit">Add board member</button>' +
-        '<div class="admin-status" data-status></div>' +
+        panelActions("Add board member", "board") +
       '</form>';
+    box.innerHTML = adminPanel("board", true, "+ Add a board member", form);
   }
 
   function duesBadge(status) {
@@ -907,14 +936,21 @@
     if (!box) return;
     var list = (state.content && state.content.homeowners) || [];
     var editing = state.editingHomeowner ? findById(list, state.editingHomeowner) : null;
+    var open = state.panels.homeowner || !!editing;
+    if (!open) {
+      box.innerHTML = '<button class="panel-toggle" type="button" data-toggle-panel="homeowner">+ Add homeowner</button>';
+      return;
+    }
     var v = editing || { name: "", address: "", email: "", phone: "", duesStatus: "unpaid", amountDue: "" };
     function opt(val, label) {
       return '<option value="' + val + '"' + (v.duesStatus === val ? " selected" : "") + '>' + label + '</option>';
     }
     box.innerHTML =
+      '<div class="admin-add">' +
       '<div class="admin-badge">🔧 Board tools</div>' +
       '<h4>' + (editing ? "Edit homeowner" : "Add homeowner") + '</h4>' +
       '<form class="admin-grid" data-save-ho>' +
+        '<input type="hidden" name="id" value="' + esc(editing ? editing.id : "") + '" />' +
         '<div class="admin-row2">' +
           '<div class="admin-field"><label>Name</label><input name="name" required value="' + esc(v.name) + '" /></div>' +
           '<div class="admin-field"><label>Address / lot</label><input name="address" value="' + esc(v.address) + '" /></div>' +
@@ -927,12 +963,13 @@
           '<div class="admin-field"><label>Dues status</label><select name="duesStatus">' + opt("unpaid", "Unpaid") + opt("paid", "Paid") + opt("partial", "Partial") + '</select></div>' +
           '<div class="admin-field"><label>Amount due</label><input name="amountDue" value="' + esc(v.amountDue) + '" placeholder="e.g. $150 or 0" /></div>' +
         '</div>' +
-        '<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">' +
+        '<div class="admin-actions">' +
           '<button class="admin-btn" type="submit">' + (editing ? "Save changes" : "Add homeowner") + '</button>' +
-          (editing ? '<button class="mini-btn" type="button" data-ho-cancel>Cancel</button>' : '') +
+          '<button class="mini-btn" type="button" data-toggle-panel="homeowner">Cancel</button>' +
           '<span class="admin-status" data-status></span>' +
         '</div>' +
-      '</form>';
+      '</form>' +
+      '</div>';
   }
 
   function fmtTime(iso) {
@@ -1071,7 +1108,7 @@
   // Global delegated click handling
   document.addEventListener("click", function (e) {
     var t = e.target.closest
-      ? e.target.closest("[data-open-signin],[data-signout],[data-doc-edit],[data-doc-del],[data-min-edit],[data-min-del],[data-board-edit],[data-board-del],[data-ho-edit],[data-ho-del],[data-ho-cancel],[data-clear-signins]")
+      ? e.target.closest("[data-open-signin],[data-signout],[data-toggle-panel],[data-doc-edit],[data-doc-del],[data-min-edit],[data-min-del],[data-board-edit],[data-board-del],[data-ho-edit],[data-ho-del],[data-clear-signins]")
       : null;
     if (!t) return;
 
@@ -1080,6 +1117,14 @@
     if (t.hasAttribute("data-signout")) {
       state.role = null; state.editingHomeowner = null; render();
       fetch("/api/logout", { method: "POST" }).then(fetchContent).catch(function () {});
+      return;
+    }
+
+    if (t.hasAttribute("data-toggle-panel")) {
+      var pk = t.getAttribute("data-toggle-panel");
+      state.panels[pk] = !state.panels[pk];
+      if (pk === "homeowner") state.editingHomeowner = null; // opening in add-mode / cancel
+      render();
       return;
     }
 
@@ -1151,14 +1196,10 @@
 
     if (t.hasAttribute("data-ho-edit")) {
       state.editingHomeowner = t.getAttribute("data-ho-edit");
+      state.panels.homeowner = true;
       render();
       var f = $("#homeownersAdmin");
       if (f && f.scrollIntoView) f.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    if (t.hasAttribute("data-ho-cancel")) {
-      state.editingHomeowner = null;
-      render();
       return;
     }
     if (t.hasAttribute("data-ho-del")) {
@@ -1182,24 +1223,30 @@
   // Delegated admin form submissions
   document.addEventListener("submit", function (e) {
     var f = e.target;
+    // Collapse a panel only after a successful save (keep it open on error so the
+    // status message stays visible).
+    function collapse(key) {
+      return function (ok) { if (ok) { state.panels[key] = false; render(); } };
+    }
+
     if (f.matches("[data-add-doc]")) {
       e.preventDefault();
       var fd = new FormData(f);
       var url = fd.get("url");
-      adminAction({ action: "add-document", doc: { title: fd.get("title"), note: fd.get("note"), url: url, meta: metaFromUrl(url) } }, f.querySelector("[data-status]"));
+      adminAction({ action: "add-document", doc: { title: fd.get("title"), note: fd.get("note"), url: url, meta: metaFromUrl(url) } }, f.querySelector("[data-status]")).then(collapse("docs"));
     } else if (f.matches("[data-add-min]")) {
       e.preventDefault();
       var fd2 = new FormData(f);
       var url2 = fd2.get("url");
-      adminAction({ action: "add-minutes", item: { title: fd2.get("title"), url: url2, meta: metaFromUrl(url2) } }, f.querySelector("[data-status]"));
+      adminAction({ action: "add-minutes", item: { title: fd2.get("title"), url: url2, meta: metaFromUrl(url2) } }, f.querySelector("[data-status]")).then(collapse("minutes"));
     } else if (f.matches("[data-set-meeting]")) {
       e.preventDefault();
       var fd3 = new FormData(f);
-      adminAction({ action: "set-meeting", meeting: { date: fd3.get("date"), location: fd3.get("location"), link: fd3.get("link") } }, f.querySelector("[data-status]"));
+      adminAction({ action: "set-meeting", meeting: { date: fd3.get("date"), location: fd3.get("location"), link: fd3.get("link") } }, f.querySelector("[data-status]")).then(collapse("meeting"));
     } else if (f.matches("[data-add-board]")) {
       e.preventDefault();
       var fb = new FormData(f);
-      adminAction({ action: "add-board", member: { role: fb.get("role"), name: fb.get("name"), email: fb.get("email"), phone: fb.get("phone") } }, f.querySelector("[data-status]"));
+      adminAction({ action: "add-board", member: { role: fb.get("role"), name: fb.get("name"), email: fb.get("email"), phone: fb.get("phone") } }, f.querySelector("[data-status]")).then(collapse("board"));
     } else if (f.matches("[data-save-ho]")) {
       e.preventDefault();
       var fh = new FormData(f);
@@ -1208,11 +1255,10 @@
         name: fh.get("name"), address: fh.get("address"), email: fh.get("email"),
         phone: fh.get("phone"), duesStatus: fh.get("duesStatus"), amountDue: fh.get("amountDue"),
       };
-      state.editingHomeowner = null; // return to "add" mode after save
       adminAction(
         hoId ? { action: "update-homeowner", id: hoId, patch: homeowner } : { action: "add-homeowner", homeowner: homeowner },
         f.querySelector("[data-status]"),
-      );
+      ).then(function (ok) { if (ok) { state.editingHomeowner = null; state.panels.homeowner = false; render(); } });
     }
   });
 
