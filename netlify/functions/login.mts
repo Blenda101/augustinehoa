@@ -1,5 +1,6 @@
 import type { Context, Config } from "@netlify/functions";
 import { roleForCode, signSession, newExp, setCookieHeader } from "../lib/auth.mts";
+import { logSignin } from "../lib/directory.mts";
 
 export default async (req: Request, _context: Context) => {
   if (req.method !== "POST") {
@@ -7,9 +8,11 @@ export default async (req: Request, _context: Context) => {
   }
 
   let code = "";
+  let email = "";
   try {
     const body = await req.json();
     code = (body?.code ?? "").toString();
+    email = (body?.email ?? "").toString();
   } catch {
     // ignore malformed body — treated as an empty code below
   }
@@ -21,6 +24,9 @@ export default async (req: Request, _context: Context) => {
       { status: 401 },
     );
   }
+
+  // Record the sign-in for the board's activity log (don't fail login if this errors).
+  try { await logSignin(email, role, new Date().toISOString()); } catch {}
 
   const token = signSession({ role, exp: newExp() });
   return new Response(JSON.stringify({ role }), {

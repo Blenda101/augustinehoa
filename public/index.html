@@ -501,6 +501,7 @@
       <div>
         <div id="homeownersTable"></div>
         <div class="admin-add" id="homeownersAdmin"></div>
+        <div id="signinsPanel"></div>
       </div>
     </div>
   </section>
@@ -559,8 +560,12 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="signInTitle">
       <div class="kick">Homeowners only</div>
       <h3 id="signInTitle">Sign in</h3>
-      <p>Enter the homeowner access code. Contact details, documents, and meeting links unlock once you’re verified.</p>
+      <p>Enter your email and the homeowner access code. Contact details, documents, and meeting links unlock once you’re verified.</p>
       <form id="signInForm">
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" required autocomplete="email" />
+        </label>
         <label class="field">
           <span>Access code</span>
           <input type="password" name="code" required autocomplete="off" />
@@ -930,6 +935,31 @@
       '</form>';
   }
 
+  function fmtTime(iso) {
+    try { return new Date(iso).toLocaleString(); } catch (e) { return iso || ""; }
+  }
+
+  function renderSignins() {
+    var box = $("#signinsPanel");
+    if (!box) return;
+    if (!isAdmin()) { box.innerHTML = ""; return; }
+    var list = (state.content && state.content.signins) || [];
+    var body = list.length
+      ? '<div class="ho-scroll"><table class="ho-table" style="min-width:440px;">' +
+          '<thead><tr><th>When</th><th>Email</th><th>Role</th></tr></thead><tbody>' +
+          list.slice(0, 50).map(function (s) {
+            return '<tr><td>' + esc(fmtTime(s.at)) + '</td><td>' + esc(s.email || "—") + '</td><td>' +
+              (s.role === "admin" ? "Board" : "Homeowner") + '</td></tr>';
+          }).join("") +
+          '</tbody></table></div>' +
+          '<button class="mini-btn danger" type="button" data-clear-signins style="margin-top:12px;">Clear log</button>'
+      : '<p class="hint" style="margin:0;">No sign-ins recorded yet.</p>';
+    box.innerHTML =
+      '<h3 class="sub-h" style="margin:36px 0 6px;">Recent sign-ins</h3>' +
+      '<p class="section-sub" style="margin:0 0 14px;">Board-only record of who has signed in (most recent first).</p>' +
+      body;
+  }
+
   function render() {
     renderVisibility();
     renderBoard();
@@ -937,6 +967,7 @@
     renderMinutes();
     renderMeeting();
     renderHomeowners();
+    renderSignins();
   }
 
   // ---------- Content fetch + admin actions ----------
@@ -990,7 +1021,7 @@
     signInError.hidden = true;
     signInError.textContent = "";
     overlay.hidden = false;
-    var input = overlay.querySelector('input[name="code"]');
+    var input = overlay.querySelector('input[name="email"]');
     if (input) input.focus();
   }
   function closeSignIn() {
@@ -1005,7 +1036,9 @@
 
   $("#signInForm").addEventListener("submit", async function (e) {
     e.preventDefault();
-    var code = (new FormData(e.target).get("code") || "").toString();
+    var fd = new FormData(e.target);
+    var code = (fd.get("code") || "").toString();
+    var email = (fd.get("email") || "").toString();
     var btn = e.target.querySelector('button[type="submit"]');
     signInError.hidden = true;
     if (btn) btn.disabled = true;
@@ -1013,7 +1046,7 @@
       var r = await fetch("/api/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ code: code }),
+        body: JSON.stringify({ code: code, email: email }),
       });
       if (r.ok) {
         var data = await r.json();
@@ -1038,7 +1071,7 @@
   // Global delegated click handling
   document.addEventListener("click", function (e) {
     var t = e.target.closest
-      ? e.target.closest("[data-open-signin],[data-signout],[data-doc-edit],[data-doc-del],[data-min-edit],[data-min-del],[data-board-edit],[data-board-del],[data-ho-edit],[data-ho-del],[data-ho-cancel]")
+      ? e.target.closest("[data-open-signin],[data-signout],[data-doc-edit],[data-doc-del],[data-min-edit],[data-min-del],[data-board-edit],[data-board-del],[data-ho-edit],[data-ho-del],[data-ho-cancel],[data-clear-signins]")
       : null;
     if (!t) return;
 
@@ -1134,6 +1167,13 @@
       if (ho && window.confirm("Delete “" + ho.name + "” from the homeowner directory?")) {
         if (state.editingHomeowner === hoId) state.editingHomeowner = null;
         adminAction({ action: "delete-homeowner", id: hoId });
+      }
+      return;
+    }
+
+    if (t.hasAttribute("data-clear-signins")) {
+      if (window.confirm("Clear the entire sign-in log?")) {
+        adminAction({ action: "clear-signins" });
       }
       return;
     }

@@ -16,6 +16,9 @@ export interface Homeowner {
   duesStatus: string; // "paid" | "unpaid" | "partial"
   amountDue: string;
 }
+export interface SignIn { email: string; role: string; at: string; }
+
+const SIGNIN_LOG_LIMIT = 500;
 
 const DEFAULT_BOARD: BoardMember[] = [
   { id: "pres",  role: "President",       name: "Jacqueline Roumou", email: "Jackie.roumou@gmail.com",      phone: "850-294-3626" },
@@ -58,6 +61,22 @@ export async function getHomeowners(): Promise<Homeowner[]> {
 }
 
 export async function saveHomeowners(list: Homeowner[]) { await store().setJSON("homeowners", list); }
+
+export async function getSignins(): Promise<SignIn[]> {
+  const list = (await store().get("signins", { type: "json" })) as SignIn[] | null;
+  return Array.isArray(list) ? list : [];
+}
+
+/** Append a sign-in (newest first), capped so the log can't grow unbounded. */
+export async function logSignin(email: string, role: string, at: string): Promise<void> {
+  const list = await getSignins();
+  list.unshift({ email: (email || "").slice(0, 200), role, at });
+  await store().setJSON("signins", list.slice(0, SIGNIN_LOG_LIMIT));
+}
+
+export async function clearSignins(): Promise<void> {
+  await store().setJSON("signins", []);
+}
 
 /** Board projection: contact fields only for signed-in viewers. */
 export function projectBoard(board: BoardMember[], signedIn: boolean) {

@@ -5,7 +5,7 @@ import {
   type DocItem, type MinItem,
 } from "../lib/content.mts";
 import {
-  getBoard, saveBoard, projectBoard, getHomeowners, saveHomeowners, newId,
+  getBoard, saveBoard, projectBoard, getHomeowners, saveHomeowners, getSignins, clearSignins, newId,
   type BoardMember, type Homeowner,
 } from "../lib/directory.mts";
 
@@ -178,6 +178,12 @@ export default async (req: Request, _context: Context) => {
       break;
     }
 
+    // ---- Sign-in log ----
+    case "clear-signins": {
+      await clearSignins();
+      break;
+    }
+
     default:
       return Response.json({ error: "Unknown action" }, { status: 400 });
   }
@@ -186,6 +192,7 @@ export default async (req: Request, _context: Context) => {
     ...projectContent(content, true),
     board: projectBoard(await getBoard(), true),
     homeowners: await getHomeowners(),
+    signins: await getSignins(),
     isAdmin: true,
   };
   return new Response(JSON.stringify(payload), {
