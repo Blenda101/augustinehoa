@@ -253,7 +253,33 @@
   .admin-btn:hover { background: var(--green-dark); }
   .admin-btn:disabled { opacity: 0.6; cursor: default; }
   .admin-status { font-size: 13px; color: var(--gold); min-height: 1.2em; }
+  .admin-field select { background: var(--cream); border: 1px solid rgba(30,59,42,0.25); color: var(--ink); font-family: var(--sans); font-size: 15px; padding: 9px 11px; outline: none; border-radius: 2px; width: 100%; }
+  .admin-field select:focus { border-color: var(--green); }
   @media (max-width: 520px) { .admin-row2 { grid-template-columns: 1fr; } }
+
+  /* Admin panel on the dark board section */
+  .admin-add.on-dark { border-color: rgba(239,232,216,0.28); background: rgba(246,241,230,0.06); }
+  .admin-add.on-dark .admin-badge { color: var(--gold-lt); }
+  .admin-add.on-dark h4 { color: var(--cream); }
+  .admin-add.on-dark .hint { color: rgba(239,232,216,0.7); }
+  .admin-add.on-dark .admin-field > label { color: rgba(239,232,216,0.7); }
+
+  .mini-btn-dark { background: transparent; border: 1px solid rgba(239,232,216,0.35); color: var(--cream-2); padding: 6px 11px; font-family: var(--sans); font-size: 12px; cursor: pointer; border-radius: 2px; }
+  .mini-btn-dark:hover { border-color: var(--gold-lt); color: var(--gold-lt); }
+  .mini-btn-dark.danger:hover { border-color: #E58C74; color: #E58C74; }
+  .member-admin { display: flex; gap: 8px; margin-top: 12px; }
+
+  /* Homeowner directory table (board-only) */
+  .ho-scroll { overflow-x: auto; border: 1px solid rgba(30,59,42,0.16); margin-bottom: 4px; }
+  .ho-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px; }
+  .ho-table th { text-align: left; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 12px 14px; border-bottom: 1px solid rgba(30,59,42,0.16); background: rgba(30,59,42,0.03); }
+  .ho-table td { padding: 12px 14px; border-bottom: 1px solid rgba(30,59,42,0.1); color: var(--ink); vertical-align: middle; }
+  .ho-table tr:last-child td { border-bottom: 0; }
+  .ho-actions { white-space: nowrap; }
+  .dues-badge { display: inline-block; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; font-weight: 600; }
+  .dues-paid { background: rgba(46,107,67,0.14); color: #2E6B43; }
+  .dues-unpaid { background: rgba(163,63,43,0.12); color: var(--red); }
+  .dues-partial { background: rgba(154,107,36,0.16); color: var(--gold); }
 
   .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   [hidden] { display: none !important; }
@@ -299,6 +325,7 @@
         <a href="#dues">Dues</a>
         <a href="#documents">Documents</a>
         <a href="#meetings">Meetings</a>
+        <a href="#homeowners" data-when="isAdmin" hidden>Homeowners</a>
         <a href="#contact">Contact</a>
       </nav>
       <div class="header-actions">
@@ -371,6 +398,7 @@
         <span class="msg">Emails and phone numbers are hidden from the public web. <span class="link">Sign in as a homeowner</span> to reveal them.</span>
       </button>
       <div class="board-grid" id="boardGrid"></div>
+      <div class="admin-add on-dark" id="boardAdmin" hidden></div>
     </div>
   </section>
 
@@ -464,6 +492,19 @@
     </div>
   </section>
 
+  <section id="homeowners" class="wrap section-pad" data-when="isAdmin" hidden>
+    <div class="split">
+      <div>
+        <h2 class="section-h">Homeowner directory</h2>
+        <p class="section-sub">Board members only — never shown to residents. Track contact details and dues status here.</p>
+      </div>
+      <div>
+        <div id="homeownersTable"></div>
+        <div class="admin-add" id="homeownersAdmin"></div>
+      </div>
+    </div>
+  </section>
+
   <section id="contact" class="band">
     <div class="wrap section-pad contact-grid">
       <div>
@@ -542,30 +583,27 @@
 (function () {
   "use strict";
 
-  // ---------- Data ----------
-  // Public board roster — names and roles only. Real emails/phones live server-side
-  // (netlify/lib/auth.mts) and are returned by /api/session and /api/login ONLY for a
-  // valid signed-in session, so they never appear in this client bundle. `hasEmail`
-  // only signals whether a masked email placeholder should show — not the address.
-  var BOARD = [
-    { role: "President",       name: "Jacqueline Roumou", hasEmail: true },
-    { role: "Vice President",  name: "Beverly Fierro",    hasEmail: true },
-    { role: "Treasurer",       name: "Gregory Smith",     hasEmail: true },
-    { role: "Secretary",       name: "Gayla Parks",       hasEmail: true },
-    { role: "Member at Large", name: "Sean Hagan",        hasEmail: false },
-  ];
-
   // ---------- State ----------
+  // The board roster, documents, meeting, minutes, and (for admins) the homeowner
+  // directory all come from /api/content. Contact details / links / PII are gated
+  // server-side, so nothing sensitive lives in this bundle.
   var state = {
     role: null,        // null | "resident" | "admin"
-    board: null,       // full board contact list from the server once signed in
-    content: null,     // { meeting, documents, minutes, isAdmin } from /api/content
+    content: null,     // { board, meeting, documents, minutes, isAdmin, homeowners? }
+    editingHomeowner: null,
     signInOpen: false,
     sent: false,
   };
 
   // Fallback content shown before /api/content resolves (or if it fails).
   var FALLBACK_CONTENT = {
+    board: [
+      { id: "pres",  role: "President",       name: "Jacqueline Roumou", hasEmail: true,  email: "", phone: "" },
+      { id: "vp",    role: "Vice President",  name: "Beverly Fierro",    hasEmail: true,  email: "", phone: "" },
+      { id: "treas", role: "Treasurer",       name: "Gregory Smith",     hasEmail: true,  email: "", phone: "" },
+      { id: "sec",   role: "Secretary",       name: "Gayla Parks",       hasEmail: true,  email: "", phone: "" },
+      { id: "mal",   role: "Member at Large", name: "Sean Hagan",        hasEmail: false, email: "", phone: "" },
+    ],
     meeting: { date: "Date to be announced", location: "Location and agenda will be posted here and emailed to homeowners.", hasLink: false, link: "" },
     documents: [
       { id: "ccrs",   title: "Declaration of Covenants, Conditions & Restrictions", note: "The recorded CC&Rs governing the property.", meta: "PDF", hasUrl: false, url: "" },
@@ -609,12 +647,9 @@
   }
 
   function renderBoard() {
-    var si = signedIn();
+    var si = signedIn(), admin = isAdmin();
     var grid = $("#boardGrid");
-    // Signed in: use the server-provided list (with contact details). Signed out:
-    // use the public roster (names/roles only).
-    var list = (si && state.board) ? state.board : BOARD;
-    grid.innerHTML = list.map(function (m) {
+    grid.innerHTML = content().board.map(function (m) {
       var contact;
       if (si) {
         var emailLine = m.email
@@ -635,14 +670,22 @@
             '</button>' +
           '</div>';
       }
+      var adminBtns = admin
+        ? '<div class="member-admin">' +
+            '<button class="mini-btn-dark" type="button" data-board-edit="' + esc(m.id) + '">Edit</button>' +
+            '<button class="mini-btn-dark danger" type="button" data-board-del="' + esc(m.id) + '">Remove</button>' +
+          '</div>'
+        : '';
       return (
         '<div class="member">' +
           '<div class="role">' + esc(m.role) + '</div>' +
           '<div class="name">' + esc(m.name) + '</div>' +
           '<div class="contact">' + contact + '</div>' +
+          adminBtns +
         '</div>'
       );
     }).join("");
+    renderBoardAdmin();
   }
 
   function renderDocs() {
@@ -794,12 +837,106 @@
       '</form>';
   }
 
+  function renderBoardAdmin() {
+    var box = $("#boardAdmin");
+    if (!box) return;
+    if (!isAdmin()) { box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    box.innerHTML =
+      '<div class="admin-badge">🔧 Board tools</div>' +
+      '<h4>Add a board member</h4>' +
+      '<p class="hint">Name and role are public. Email and phone show only to signed-in homeowners.</p>' +
+      '<form class="admin-grid" data-add-board>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Role</label><input name="role" required placeholder="e.g. Treasurer" /></div>' +
+          '<div class="admin-field"><label>Name</label><input name="name" required placeholder="Full name" /></div>' +
+        '</div>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Email</label><input name="email" type="email" placeholder="name@example.com" /></div>' +
+          '<div class="admin-field"><label>Phone</label><input name="phone" placeholder="850-555-1234" /></div>' +
+        '</div>' +
+        '<button class="admin-btn" type="submit">Add board member</button>' +
+        '<div class="admin-status" data-status></div>' +
+      '</form>';
+  }
+
+  function duesBadge(status) {
+    var s = (status || "").toLowerCase();
+    var label = s === "paid" ? "Paid" : s === "partial" ? "Partial" : "Unpaid";
+    return '<span class="dues-badge dues-' + (s === "paid" ? "paid" : s === "partial" ? "partial" : "unpaid") + '">' + label + '</span>';
+  }
+
+  function renderHomeowners() {
+    var wrap = $("#homeownersTable");
+    if (!wrap) return;
+    if (!isAdmin()) { wrap.innerHTML = ""; var ha = $("#homeownersAdmin"); if (ha) ha.innerHTML = ""; return; }
+    var list = (state.content && state.content.homeowners) || [];
+    if (!list.length) {
+      wrap.innerHTML = '<p class="hint" style="margin:0;">No homeowners added yet. Use the form below to add the first one.</p>';
+    } else {
+      var rows = list.map(function (h) {
+        return '<tr>' +
+          '<td>' + esc(h.name) + '</td>' +
+          '<td>' + (h.address ? esc(h.address) : "—") + '</td>' +
+          '<td>' + (h.email ? '<a href="mailto:' + esc(h.email) + '">' + esc(h.email) + '</a>' : "—") + '</td>' +
+          '<td>' + (h.phone ? esc(h.phone) : "—") + '</td>' +
+          '<td>' + duesBadge(h.duesStatus) + '</td>' +
+          '<td>' + (h.amountDue ? esc(h.amountDue) : "—") + '</td>' +
+          '<td class="ho-actions">' +
+            '<button class="mini-btn" type="button" data-ho-edit="' + esc(h.id) + '">Edit</button> ' +
+            '<button class="mini-btn danger" type="button" data-ho-del="' + esc(h.id) + '">Delete</button>' +
+          '</td>' +
+        '</tr>';
+      }).join("");
+      wrap.innerHTML =
+        '<div class="ho-scroll"><table class="ho-table">' +
+          '<thead><tr><th>Name</th><th>Address / lot</th><th>Email</th><th>Phone</th><th>Dues</th><th>Amount due</th><th></th></tr></thead>' +
+          '<tbody>' + rows + '</tbody>' +
+        '</table></div>';
+    }
+    renderHomeownerForm();
+  }
+
+  function renderHomeownerForm() {
+    var box = $("#homeownersAdmin");
+    if (!box) return;
+    var list = (state.content && state.content.homeowners) || [];
+    var editing = state.editingHomeowner ? findById(list, state.editingHomeowner) : null;
+    var v = editing || { name: "", address: "", email: "", phone: "", duesStatus: "unpaid", amountDue: "" };
+    function opt(val, label) {
+      return '<option value="' + val + '"' + (v.duesStatus === val ? " selected" : "") + '>' + label + '</option>';
+    }
+    box.innerHTML =
+      '<div class="admin-badge">🔧 Board tools</div>' +
+      '<h4>' + (editing ? "Edit homeowner" : "Add homeowner") + '</h4>' +
+      '<form class="admin-grid" data-save-ho>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Name</label><input name="name" required value="' + esc(v.name) + '" /></div>' +
+          '<div class="admin-field"><label>Address / lot</label><input name="address" value="' + esc(v.address) + '" /></div>' +
+        '</div>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Email</label><input name="email" type="email" value="' + esc(v.email) + '" /></div>' +
+          '<div class="admin-field"><label>Phone</label><input name="phone" value="' + esc(v.phone) + '" /></div>' +
+        '</div>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Dues status</label><select name="duesStatus">' + opt("unpaid", "Unpaid") + opt("paid", "Paid") + opt("partial", "Partial") + '</select></div>' +
+          '<div class="admin-field"><label>Amount due</label><input name="amountDue" value="' + esc(v.amountDue) + '" placeholder="e.g. $150 or 0" /></div>' +
+        '</div>' +
+        '<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">' +
+          '<button class="admin-btn" type="submit">' + (editing ? "Save changes" : "Add homeowner") + '</button>' +
+          (editing ? '<button class="mini-btn" type="button" data-ho-cancel>Cancel</button>' : '') +
+          '<span class="admin-status" data-status></span>' +
+        '</div>' +
+      '</form>';
+  }
+
   function render() {
     renderVisibility();
     renderBoard();
     renderDocs();
     renderMinutes();
     renderMeeting();
+    renderHomeowners();
   }
 
   // ---------- Content fetch + admin actions ----------
@@ -881,10 +1018,9 @@
       if (r.ok) {
         var data = await r.json();
         state.role = data.role;
-        state.board = data.board || null;
         closeSignIn();
         render();
-        fetchContent(); // refresh gated document/meeting links for this session
+        fetchContent(); // load board contact, gated links, and (for board) homeowners
       } else {
         var msg = "That code isn’t recognized.";
         try { var err = await r.json(); if (err && err.error) msg = err.error; } catch (e2) {}
@@ -902,14 +1038,14 @@
   // Global delegated click handling
   document.addEventListener("click", function (e) {
     var t = e.target.closest
-      ? e.target.closest("[data-open-signin],[data-signout],[data-doc-edit],[data-doc-del],[data-min-edit],[data-min-del]")
+      ? e.target.closest("[data-open-signin],[data-signout],[data-doc-edit],[data-doc-del],[data-min-edit],[data-min-del],[data-board-edit],[data-board-del],[data-ho-edit],[data-ho-del],[data-ho-cancel]")
       : null;
     if (!t) return;
 
     if (t.hasAttribute("data-open-signin")) { e.preventDefault(); openSignIn(); return; }
 
     if (t.hasAttribute("data-signout")) {
-      state.role = null; state.board = null; render();
+      state.role = null; state.editingHomeowner = null; render();
       fetch("/api/logout", { method: "POST" }).then(fetchContent).catch(function () {});
       return;
     }
@@ -955,6 +1091,52 @@
       }
       return;
     }
+
+    if (t.hasAttribute("data-board-edit")) {
+      var bId = t.getAttribute("data-board-edit");
+      var bm = findById(content().board, bId);
+      if (!bm) return;
+      var bRole = window.prompt("Role", bm.role);
+      if (bRole === null) return;
+      var bName = window.prompt("Name", bm.name);
+      if (bName === null) return;
+      var bEmail = window.prompt("Email (leave blank for none)", bm.email || "");
+      if (bEmail === null) return;
+      var bPhone = window.prompt("Phone (leave blank for none)", bm.phone || "");
+      if (bPhone === null) return;
+      adminAction({ action: "update-board", id: bId, patch: { role: bRole, name: bName, email: bEmail, phone: bPhone } });
+      return;
+    }
+    if (t.hasAttribute("data-board-del")) {
+      var bId2 = t.getAttribute("data-board-del");
+      var bm2 = findById(content().board, bId2);
+      if (bm2 && window.confirm("Remove “" + bm2.name + "” from the board?")) {
+        adminAction({ action: "delete-board", id: bId2 });
+      }
+      return;
+    }
+
+    if (t.hasAttribute("data-ho-edit")) {
+      state.editingHomeowner = t.getAttribute("data-ho-edit");
+      render();
+      var f = $("#homeownersAdmin");
+      if (f && f.scrollIntoView) f.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    if (t.hasAttribute("data-ho-cancel")) {
+      state.editingHomeowner = null;
+      render();
+      return;
+    }
+    if (t.hasAttribute("data-ho-del")) {
+      var hoId = t.getAttribute("data-ho-del");
+      var ho = findById((state.content && state.content.homeowners) || [], hoId);
+      if (ho && window.confirm("Delete “" + ho.name + "” from the homeowner directory?")) {
+        if (state.editingHomeowner === hoId) state.editingHomeowner = null;
+        adminAction({ action: "delete-homeowner", id: hoId });
+      }
+      return;
+    }
   });
 
   // Delegated admin form submissions
@@ -974,6 +1156,23 @@
       e.preventDefault();
       var fd3 = new FormData(f);
       adminAction({ action: "set-meeting", meeting: { date: fd3.get("date"), location: fd3.get("location"), link: fd3.get("link") } }, f.querySelector("[data-status]"));
+    } else if (f.matches("[data-add-board]")) {
+      e.preventDefault();
+      var fb = new FormData(f);
+      adminAction({ action: "add-board", member: { role: fb.get("role"), name: fb.get("name"), email: fb.get("email"), phone: fb.get("phone") } }, f.querySelector("[data-status]"));
+    } else if (f.matches("[data-save-ho]")) {
+      e.preventDefault();
+      var fh = new FormData(f);
+      var hoId = (fh.get("id") || "").toString();
+      var homeowner = {
+        name: fh.get("name"), address: fh.get("address"), email: fh.get("email"),
+        phone: fh.get("phone"), duesStatus: fh.get("duesStatus"), amountDue: fh.get("amountDue"),
+      };
+      state.editingHomeowner = null; // return to "add" mode after save
+      adminAction(
+        hoId ? { action: "update-homeowner", id: hoId, patch: homeowner } : { action: "add-homeowner", homeowner: homeowner },
+        f.querySelector("[data-status]"),
+      );
     }
   });
 
@@ -1006,7 +1205,7 @@
   fetch("/api/session", { headers: { accept: "application/json" } })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (d) {
-      if (d && d.role) { state.role = d.role; state.board = d.board || null; render(); }
+      if (d && d.role) { state.role = d.role; render(); }
     })
     .catch(function () {});
 })();

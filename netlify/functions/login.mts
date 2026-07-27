@@ -1,5 +1,5 @@
 import type { Context, Config } from "@netlify/functions";
-import { roleForCode, signSession, newExp, setCookieHeader, getBoard } from "../lib/auth.mts";
+import { roleForCode, signSession, newExp, setCookieHeader } from "../lib/auth.mts";
 
 export default async (req: Request, _context: Context) => {
   if (req.method !== "POST") {
@@ -23,9 +23,7 @@ export default async (req: Request, _context: Context) => {
   }
 
   const token = signSession({ role, exp: newExp() });
-  const board = await getBoard();
-
-  return new Response(JSON.stringify({ role, board }), {
+  return new Response(JSON.stringify({ role }), {
     status: 200,
     headers: {
       "content-type": "application/json",
