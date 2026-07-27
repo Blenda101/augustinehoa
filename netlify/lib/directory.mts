@@ -25,7 +25,10 @@ const DEFAULT_BOARD: BoardMember[] = [
   { id: "mal",   role: "Member at Large", name: "Sean Hagan",        email: "",                             phone: "732-778-7986" },
 ];
 
-function store() { return getStore("directory"); }
+// Strong consistency: reads reflect the latest write. Without this, Blobs is
+// eventually consistent — a read right after a write can return stale/null data,
+// which would corrupt read-modify-write updates (and could wipe the directory).
+function store() { return getStore({ name: "directory", consistency: "strong" }); }
 
 export function newId(prefix: string): string {
   return prefix + "-" + crypto.randomUUID().slice(0, 8);
@@ -49,10 +52,9 @@ export async function getBoard(): Promise<BoardMember[]> {
 export async function saveBoard(board: BoardMember[]) { await store().setJSON("board", board); }
 
 export async function getHomeowners(): Promise<Homeowner[]> {
-  const s = store();
-  let list = (await s.get("homeowners", { type: "json" })) as Homeowner[] | null;
-  if (!list || !Array.isArray(list)) { list = []; await s.setJSON("homeowners", list); }
-  return list;
+  // Never write on read — an empty result just means no homeowners yet.
+  const list = (await store().get("homeowners", { type: "json" })) as Homeowner[] | null;
+  return Array.isArray(list) ? list : [];
 }
 
 export async function saveHomeowners(list: Homeowner[]) { await store().setJSON("homeowners", list); }

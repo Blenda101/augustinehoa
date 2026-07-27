@@ -31,7 +31,8 @@ const DEFAULT_MEETING: Meeting = {
   link: "",
 };
 
-function store() { return getStore("content"); }
+// Strong consistency so reads reflect the latest admin write (see directory.mts).
+function store() { return getStore({ name: "content", consistency: "strong" }); }
 
 export function newId(prefix: string): string {
   return prefix + "-" + crypto.randomUUID().slice(0, 8);
