@@ -171,10 +171,14 @@
   .docs-note { font-size: 14px; line-height: 1.6; color: var(--muted-2); margin: 22px 0 0; }
 
   /* ---------- Meetings ---------- */
-  .next-meeting { border: 1px solid rgba(30,59,42,0.16); padding: 28px 26px; margin-bottom: 30px; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
-  .next-meeting .date { font-family: var(--serif); font-size: 28px; color: var(--green); line-height: 1.25; margin-bottom: 6px; }
-  .next-meeting .where { font-size: 15px; color: var(--slate); }
-  .meeting-actions { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+  /* Unified Meetings & minutes card */
+  .meeting-card { border: 1px solid rgba(30,59,42,0.18); }
+  .mc-section { padding: 26px; }
+  .mc-section + .mc-section { border-top: 1px solid rgba(30,59,42,0.14); }
+  .mc-section .kicker { display: block; margin-bottom: 10px; }
+  .meeting-card .date { font-family: var(--serif); font-size: 28px; color: var(--green); line-height: 1.25; margin-bottom: 6px; }
+  .meeting-card .where { font-size: 15px; color: var(--slate); line-height: 1.55; }
+  .mc-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
   .join { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 12px 22px; font-size: 14px; font-weight: 600; white-space: nowrap; }
   .join.active { background: var(--green); color: var(--cream); }
   .join.active:hover { background: var(--green-dark); color: var(--cream); }
@@ -182,16 +186,19 @@
   .join.disabled { grid-area: 1 / 1; border: 1px solid rgba(30,59,42,0.18); color: rgba(110,117,101,0.65); }
   .join-signin { grid-area: 1 / 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--green); border: 0; color: var(--cream); padding: 12px 22px; font-family: var(--sans); font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; opacity: 0; transition: opacity 130ms ease; }
   .join-stack:hover .join-signin { opacity: 1; }
-  .agenda-link { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(30,59,42,0.3); color: var(--green); padding: 12px 22px; font-size: 14px; font-weight: 500; white-space: nowrap; }
-  .agenda-link:hover { background: rgba(30,59,42,0.06); color: var(--green); }
-  .minute { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: baseline; padding: 16px 4px; border-bottom: 1px solid rgba(30,59,42,0.12); }
-  .minute .m-title { font-size: 16px; color: var(--ink); }
-  .min-stack { display: grid; justify-items: end; }
-  .min-meta { grid-area: 1 / 1; font-size: 13px; color: rgba(110,117,101,0.55); letter-spacing: 0.04em; white-space: nowrap; }
-  .min-signin { grid-area: 1 / 1; background: var(--cream); border: 0; padding: 0; font-family: var(--sans); font-size: 13px; color: var(--gold); letter-spacing: 0.04em; white-space: nowrap; cursor: pointer; opacity: 0; transition: opacity 130ms ease; }
-  .min-stack:hover .min-signin { opacity: 1; }
-  .min-dl { font-size: 13px; color: var(--gold); letter-spacing: 0.04em; white-space: nowrap; text-decoration: none; border-bottom: 1px solid rgba(154,107,36,0.4); }
-  .min-dl:hover { color: var(--green); border-color: var(--green); }
+  .mc-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; border: 1px solid rgba(30,59,42,0.3); color: var(--green); background: transparent; font-family: var(--sans); padding: 12px 22px; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; }
+  .mc-btn:hover { background: rgba(30,59,42,0.06); color: var(--green); }
+  .mc-btn.disabled { color: rgba(110,117,101,0.6); border-color: rgba(30,59,42,0.18); cursor: default; background: transparent; }
+  /* Past-meeting rows */
+  .pm-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(30,59,42,0.12); }
+  .pm-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .pm-title { font-size: 16px; color: var(--ink); }
+  .pm-links { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .pm-link { text-decoration: none; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(154,107,36,0.4); padding: 5px 10px; border-radius: 2px; white-space: nowrap; }
+  .pm-link:hover { color: var(--green); border-color: var(--green); }
+  .pm-none { font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(110,117,101,0.5); padding: 5px 4px; }
+  .pm-locked { background: transparent; border: 1px solid rgba(30,59,42,0.2); color: var(--muted); font-family: var(--sans); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; padding: 5px 10px; border-radius: 2px; cursor: pointer; white-space: nowrap; }
+  .pm-locked:hover { border-color: var(--gold); color: var(--gold); }
 
   /* ---------- Contact ---------- */
   .contact-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; }
@@ -482,21 +489,20 @@
         <p class="section-sub">Open to all homeowners. Notice is posted at least 48 hours in advance.</p>
       </div>
       <div>
-        <div class="next-meeting">
-          <div>
+        <div class="meeting-card">
+          <div class="mc-section">
             <div class="kicker">Next meeting</div>
             <div class="date" id="meetingDate">Date to be announced</div>
             <div class="where" id="meetingWhere">Location and agenda will be posted here and emailed to homeowners.</div>
+            <div class="mc-actions" id="nextActions"></div>
+            <div id="meetingAdmin" hidden></div>
           </div>
-          <div class="meeting-actions">
-            <div id="joinArea"></div>
-            <a href="#contact" class="agenda-link">Add an agenda item</a>
+          <div class="mc-section">
+            <div class="kicker">Past meetings</div>
+            <div id="meetingsList"></div>
+            <div id="pastMeetingAdmin" hidden></div>
           </div>
         </div>
-        <div id="meetingAdmin" hidden></div>
-        <h3 class="sub-h" style="margin: 0 0 4px;">Past minutes</h3>
-        <div id="minutesList"></div>
-        <div id="minutesAdmin" hidden></div>
       </div>
     </div>
   </section>
@@ -621,7 +627,7 @@
       { id: "sec",   role: "Secretary",       name: "Gayla Parks",       hasEmail: true,  email: "", phone: "" },
       { id: "mal",   role: "Member at Large", name: "Sean Hagan",        hasEmail: false, email: "", phone: "" },
     ],
-    meeting: { date: "Date to be announced", location: "Location and agenda will be posted here and emailed to homeowners.", hasLink: false, link: "" },
+    meeting: { date: "Date to be announced", location: "Location and agenda will be posted here and emailed to homeowners.", hasLink: false, link: "", hasAgenda: false, agenda: "" },
     documents: [
       { id: "ccrs",   title: "Declaration of Covenants, Conditions & Restrictions", note: "The recorded CC&Rs governing the property.", meta: "PDF", hasUrl: false, url: "" },
       { id: "bylaws", title: "Bylaws",                    note: "How the association and its board operate.",              meta: "PDF", hasUrl: false, url: "" },
@@ -629,9 +635,9 @@
       { id: "arch",   title: "Architectural Guidelines",  note: "Read before any exterior change — approval is required.", meta: "PDF", hasUrl: false, url: "" },
       { id: "budget", title: "Annual Budget",             note: "Where your assessments go.",                              meta: "PDF", hasUrl: false, url: "" },
     ],
-    minutes: [
-      { id: "annual", title: "Annual Meeting — minutes", meta: "PDF", hasUrl: false, url: "" },
-      { id: "board",  title: "Board Meeting — minutes",  meta: "PDF", hasUrl: false, url: "" },
+    meetings: [
+      { id: "annual", title: "Annual Meeting", hasAgenda: false, agenda: "", hasMinutes: false, minutes: "" },
+      { id: "board",  title: "Board Meeting",  hasAgenda: false, agenda: "", hasMinutes: false, minutes: "" },
     ],
   };
 
@@ -751,32 +757,40 @@
     renderDocsAdmin();
   }
 
-  function renderMinutes() {
+  function renderPastMeetings() {
     var si = signedIn(), admin = isAdmin();
-    var list = $("#minutesList");
-    list.innerHTML = content().minutes.map(function (mi) {
-      var right;
-      if (si) {
-        right = mi.hasUrl
-          ? '<a class="min-dl" href="' + esc(mi.url) + '" target="_blank" rel="noopener">Download ' + esc(mi.meta) + '</a>'
-          : '<span class="min-meta">Not posted yet</span>';
-      } else {
-        right = '<div class="min-stack">' +
-            '<span class="min-meta">' + esc(mi.meta) + '</span>' +
-            '<button class="min-signin" type="button" data-open-signin>Sign in to download</button>' +
-          '</div>';
-      }
-      var adminBtns = admin
-        ? '<div class="edit-btns" style="margin-left:14px;">' +
-            '<button class="mini-btn" type="button" data-min-edit="' + esc(mi.id) + '">Edit</button>' +
-            '<button class="mini-btn danger" type="button" data-min-del="' + esc(mi.id) + '">Delete</button>' +
-          '</div>'
-        : '';
-      return '<div class="minute"><span class="m-title">' + esc(mi.title) + '</span>' +
-        '<div style="display:flex; align-items:center;">' + right + adminBtns + '</div></div>';
-    }).join("");
+    var list = $("#meetingsList");
+    var items = content().meetings;
 
-    renderMinutesAdmin();
+    function docLink(has, url, label) {
+      if (si) {
+        return (has && url)
+          ? '<a class="pm-link" href="' + esc(url) + '" target="_blank" rel="noopener">' + label + ' ↗</a>'
+          : '<span class="pm-none">No ' + label.toLowerCase() + '</span>';
+      }
+      return '<button class="pm-locked" type="button" data-open-signin>🔒 ' + label + '</button>';
+    }
+
+    if (!items.length) {
+      list.innerHTML = '<p class="section-sub" style="margin:0;">No past meetings posted yet.</p>';
+    } else {
+      list.innerHTML = items.map(function (mi) {
+        var adminBtns = admin
+          ? '<button class="mini-btn" type="button" data-mtg-edit="' + esc(mi.id) + '">Edit</button>' +
+            '<button class="mini-btn danger" type="button" data-mtg-del="' + esc(mi.id) + '">Delete</button>'
+          : '';
+        return '<div class="pm-row">' +
+          '<span class="pm-title">' + esc(mi.title) + '</span>' +
+          '<div class="pm-links">' +
+            docLink(mi.hasAgenda, mi.agenda, "Agenda") +
+            docLink(mi.hasMinutes, mi.minutes, "Minutes") +
+            adminBtns +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+
+    renderPastMeetingAdmin();
   }
 
   function renderMeeting() {
@@ -784,17 +798,29 @@
     var m = content().meeting;
     $("#meetingDate").textContent = m.date || "Date to be announced";
     $("#meetingWhere").textContent = m.location || "";
-    var area = $("#joinArea");
+
+    var join;
     if (si) {
-      area.innerHTML = (m.hasLink && m.link)
+      join = (m.hasLink && m.link)
         ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener" class="join active">Join the meeting</a>'
         : '<span class="join disabled">Link not posted yet</span>';
     } else {
-      area.innerHTML = '<div class="join-stack">' +
+      join = '<div class="join-stack">' +
           '<span class="join disabled">Join the meeting</span>' +
           '<button class="join-signin" type="button" data-open-signin>🔒 Sign in to join</button>' +
         '</div>';
     }
+
+    var agenda;
+    if (si) {
+      agenda = (m.hasAgenda && m.agenda)
+        ? '<a href="' + esc(m.agenda) + '" target="_blank" rel="noopener" class="mc-btn">Agenda ↗</a>'
+        : '<span class="mc-btn disabled">Agenda not posted</span>';
+    } else {
+      agenda = '<button class="mc-btn" type="button" data-open-signin>🔒 Agenda</button>';
+    }
+
+    $("#nextActions").innerHTML = join + agenda;
     renderMeetingAdmin();
   }
 
@@ -833,22 +859,24 @@
     box.innerHTML = adminPanel("docs", false, "+ Add a document", form);
   }
 
-  function renderMinutesAdmin() {
-    var box = $("#minutesAdmin");
+  function renderPastMeetingAdmin() {
+    var box = $("#pastMeetingAdmin");
+    if (!box) return;
     if (!isAdmin()) { box.hidden = true; box.innerHTML = ""; return; }
     box.hidden = false;
     var form =
       '<div class="admin-badge">🔧 Board tools</div>' +
-      '<h4>Add meeting minutes</h4>' +
-      '<p class="hint">Paste a link to the minutes document. Visible to signed-in homeowners.</p>' +
-      '<form class="admin-grid" data-add-min>' +
+      '<h4>Add a past meeting</h4>' +
+      '<p class="hint">Add a meeting with links to its agenda and minutes documents (Google Drive, Dropbox…). Both show only to signed-in homeowners.</p>' +
+      '<form class="admin-grid" data-add-mtg>' +
+        '<div class="admin-field"><label>Title</label><input name="title" required placeholder="e.g. Board Meeting — Aug 2026" /></div>' +
         '<div class="admin-row2">' +
-          '<div class="admin-field"><label>Title</label><input name="title" required placeholder="e.g. Board Meeting — Aug 2026" /></div>' +
-          '<div class="admin-field"><label>Link (URL)</label><input name="url" type="url" required placeholder="https://…" /></div>' +
+          '<div class="admin-field"><label>Agenda link (URL)</label><input name="agenda" type="url" placeholder="https://…" /></div>' +
+          '<div class="admin-field"><label>Minutes link (URL)</label><input name="minutes" type="url" placeholder="https://…" /></div>' +
         '</div>' +
-        panelActions("Add minutes", "minutes") +
+        panelActions("Add meeting", "minutes") +
       '</form>';
-    box.innerHTML = adminPanel("minutes", false, "+ Add meeting minutes", form);
+    box.innerHTML = adminPanel("minutes", false, "+ Add a past meeting", form);
   }
 
   function renderMeetingAdmin() {
@@ -859,13 +887,14 @@
     var form =
       '<div class="admin-badge">🔧 Board tools</div>' +
       '<h4>Edit next meeting</h4>' +
-      '<p class="hint">Set the date, location, and a join link (Zoom, Google Meet…). The join link is shown only to signed-in homeowners.</p>' +
+      '<p class="hint">Set the date, location, a join link (Zoom, Google Meet…), and a link to the agenda document. Links show only to signed-in homeowners.</p>' +
       '<form class="admin-grid" data-set-meeting>' +
         '<div class="admin-row2">' +
           '<div class="admin-field"><label>Date &amp; time</label><input name="date" value="' + esc(m.date || "") + '" placeholder="e.g. Aug 14, 2026 · 6:30 PM" /></div>' +
           '<div class="admin-field"><label>Join link (URL)</label><input name="link" type="url" value="' + esc(m.link || "") + '" placeholder="https://…" /></div>' +
         '</div>' +
         '<div class="admin-field"><label>Location / details</label><textarea name="location" rows="2" placeholder="Address or note">' + esc(m.location || "") + '</textarea></div>' +
+        '<div class="admin-field"><label>Agenda link (URL)</label><input name="agenda" type="url" value="' + esc(m.agenda || "") + '" placeholder="https://…" /></div>' +
         panelActions("Save meeting", "meeting") +
       '</form>';
     box.innerHTML = adminPanel("meeting", false, "Edit next meeting", form);
@@ -1001,8 +1030,8 @@
     renderVisibility();
     renderBoard();
     renderDocs();
-    renderMinutes();
     renderMeeting();
+    renderPastMeetings();
     renderHomeowners();
     renderSignins();
   }
@@ -1108,7 +1137,7 @@
   // Global delegated click handling
   document.addEventListener("click", function (e) {
     var t = e.target.closest
-      ? e.target.closest("[data-open-signin],[data-signout],[data-toggle-panel],[data-doc-edit],[data-doc-del],[data-min-edit],[data-min-del],[data-board-edit],[data-board-del],[data-ho-edit],[data-ho-del],[data-clear-signins]")
+      ? e.target.closest("[data-open-signin],[data-signout],[data-toggle-panel],[data-doc-edit],[data-doc-del],[data-mtg-edit],[data-mtg-del],[data-board-edit],[data-board-del],[data-ho-edit],[data-ho-del],[data-clear-signins]")
       : null;
     if (!t) return;
 
@@ -1150,22 +1179,24 @@
       return;
     }
 
-    if (t.hasAttribute("data-min-edit")) {
-      var minId = t.getAttribute("data-min-edit");
-      var mi = findById(content().minutes, minId);
-      if (!mi) return;
-      var mTitle = window.prompt("Minutes title", mi.title);
-      if (mTitle === null) return;
-      var mUrl = window.prompt("Link (URL) — leave blank to keep it hidden", mi.url || "");
-      if (mUrl === null) return;
-      adminAction({ action: "update-minutes", id: minId, patch: { title: mTitle, url: mUrl } });
+    if (t.hasAttribute("data-mtg-edit")) {
+      var mtgId = t.getAttribute("data-mtg-edit");
+      var mtg = findById(content().meetings, mtgId);
+      if (!mtg) return;
+      var mtTitle = window.prompt("Meeting title", mtg.title);
+      if (mtTitle === null) return;
+      var mtAgenda = window.prompt("Agenda link (URL) — leave blank to keep it hidden", mtg.agenda || "");
+      if (mtAgenda === null) return;
+      var mtMinutes = window.prompt("Minutes link (URL) — leave blank to keep it hidden", mtg.minutes || "");
+      if (mtMinutes === null) return;
+      adminAction({ action: "update-pastmeeting", id: mtgId, patch: { title: mtTitle, agenda: mtAgenda, minutes: mtMinutes } });
       return;
     }
-    if (t.hasAttribute("data-min-del")) {
-      var minId2 = t.getAttribute("data-min-del");
-      var mi2 = findById(content().minutes, minId2);
-      if (mi2 && window.confirm("Remove “" + mi2.title + "” from past minutes?")) {
-        adminAction({ action: "delete-minutes", id: minId2 });
+    if (t.hasAttribute("data-mtg-del")) {
+      var mtgId2 = t.getAttribute("data-mtg-del");
+      var mtg2 = findById(content().meetings, mtgId2);
+      if (mtg2 && window.confirm("Remove “" + mtg2.title + "” from past meetings?")) {
+        adminAction({ action: "delete-pastmeeting", id: mtgId2 });
       }
       return;
     }
@@ -1234,11 +1265,10 @@
       var fd = new FormData(f);
       var url = fd.get("url");
       adminAction({ action: "add-document", doc: { title: fd.get("title"), note: fd.get("note"), url: url, meta: metaFromUrl(url) } }, f.querySelector("[data-status]")).then(collapse("docs"));
-    } else if (f.matches("[data-add-min]")) {
+    } else if (f.matches("[data-add-mtg]")) {
       e.preventDefault();
-      var fd2 = new FormData(f);
-      var url2 = fd2.get("url");
-      adminAction({ action: "add-minutes", item: { title: fd2.get("title"), url: url2, meta: metaFromUrl(url2) } }, f.querySelector("[data-status]")).then(collapse("minutes"));
+      var fm = new FormData(f);
+      adminAction({ action: "add-pastmeeting", item: { title: fm.get("title"), agenda: fm.get("agenda"), minutes: fm.get("minutes") } }, f.querySelector("[data-status]")).then(collapse("minutes"));
     } else if (f.matches("[data-set-meeting]")) {
       e.preventDefault();
       var fd3 = new FormData(f);

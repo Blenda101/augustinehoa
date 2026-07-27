@@ -1,8 +1,8 @@
 import type { Context, Config } from "@netlify/functions";
 import { verifySession, readCookie, SESSION_COOKIE } from "../lib/auth.mts";
 import {
-  getContent, saveDocuments, saveMinutes, saveMeeting, projectContent, newId as newContentId,
-  type DocItem, type MinItem,
+  getContent, saveDocuments, savePastMeetings, saveMeeting, projectContent, newId as newContentId,
+  type DocItem, type PastMeeting,
 } from "../lib/content.mts";
 import {
   getBoard, saveBoard, projectBoard, getHomeowners, saveHomeowners, getSignins, clearSignins, newId,
@@ -33,6 +33,7 @@ export default async (req: Request, _context: Context) => {
         date: str(m.date, 200) || "Date to be announced",
         location: str(m.location, 400),
         link: str(m.link, 1000),
+        agenda: str(m.agenda, 1000),
       };
       await saveMeeting(content.meeting);
       break;
@@ -72,35 +73,36 @@ export default async (req: Request, _context: Context) => {
       break;
     }
 
-    // ---- Minutes ----
-    case "add-minutes": {
+    // ---- Past meetings (each has an Agenda and Minutes link) ----
+    case "add-pastmeeting": {
       const m = body.item || {};
-      const item: MinItem = {
-        id: newContentId("min"),
-        title: str(m.title, 200) || "Meeting minutes",
-        url: str(m.url, 1000),
-        meta: str(m.meta, 20) || "PDF",
+      const item: PastMeeting = {
+        id: newContentId("mtg"),
+        title: str(m.title, 200) || "Meeting",
+        agenda: str(m.agenda, 1000),
+        minutes: str(m.minutes, 1000),
       };
-      content.minutes.push(item);
-      await saveMinutes(content.minutes);
+      content.meetings.push(item);
+      await savePastMeetings(content.meetings);
       break;
     }
-    case "update-minutes": {
-      content.minutes = content.minutes.map((m) =>
+    case "update-pastmeeting": {
+      content.meetings = content.meetings.map((m) =>
         m.id === body.id
           ? {
               ...m,
               title: body.patch?.title !== undefined ? str(body.patch.title, 200) || m.title : m.title,
-              url: body.patch?.url !== undefined ? str(body.patch.url, 1000) : m.url,
+              agenda: body.patch?.agenda !== undefined ? str(body.patch.agenda, 1000) : m.agenda,
+              minutes: body.patch?.minutes !== undefined ? str(body.patch.minutes, 1000) : m.minutes,
             }
           : m,
       );
-      await saveMinutes(content.minutes);
+      await savePastMeetings(content.meetings);
       break;
     }
-    case "delete-minutes": {
-      content.minutes = content.minutes.filter((m) => m.id !== body.id);
-      await saveMinutes(content.minutes);
+    case "delete-pastmeeting": {
+      content.meetings = content.meetings.filter((m) => m.id !== body.id);
+      await savePastMeetings(content.meetings);
       break;
     }
 
