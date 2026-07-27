@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Board console — Augustine Place HOA</title>
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Karla:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="site-header no-print">
+    <div class="wrap header-inner">
+      <a href="/" class="brand">
+        <span class="brand-name">Augustine Place</span>
+        <span class="brand-tag">Board</span>
+      </a>
+      <div class="header-actions" id="hdrActions" hidden>
+        <a class="console-link" href="/">View site ↗</a>
+        <span class="role-label">Board member</span>
+        <button class="btn btn-ghost" data-signout>Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sign-in gate (shown when not signed in as a board member) -->
+  <div class="gate" id="gate" hidden>
+    <div class="kick">Board members only</div>
+    <h1>Board console</h1>
+    <p>Sign in with your email and the board access code to manage the site.</p>
+    <form id="gateForm">
+      <label class="admin-field"><label>Email</label><input type="email" name="email" required autocomplete="email" /></label>
+      <label class="admin-field"><label>Board access code</label><input type="password" name="code" required autocomplete="off" /></label>
+      <div class="admin-status" id="gateError" style="color:var(--red);"></div>
+      <button class="admin-btn" type="submit">Sign in</button>
+    </form>
+  </div>
+
+  <!-- Console (shown to board members) -->
+  <main class="wrap console" id="console" hidden>
+    <h1 class="console-title">Board console</h1>
+    <p class="console-sub">Manage everything homeowners see, plus the internal directory. Changes are live immediately — use <a href="/">View site ↗</a> to preview.</p>
+
+    <section class="console-card">
+      <h2>Next meeting</h2>
+      <p class="section-sub">Shown at the top of the Meetings section. Join link &amp; agenda are homeowner-only.</p>
+      <div id="cMeeting"></div>
+    </section>
+
+    <section class="console-card">
+      <h2>Governing documents</h2>
+      <p class="section-sub">Homeowner-only download links.</p>
+      <div id="cDocs"></div>
+    </section>
+
+    <section class="console-card">
+      <h2>Past meetings</h2>
+      <p class="section-sub">Each carries an agenda and a minutes link (homeowner-only).</p>
+      <div id="cPast"></div>
+    </section>
+
+    <section class="console-card">
+      <h2>Board roster</h2>
+      <p class="section-sub">Names &amp; roles are public; email &amp; phone show only to signed-in homeowners.</p>
+      <div id="cBoard"></div>
+    </section>
+
+    <section class="console-card">
+      <h2>Homeowner directory</h2>
+      <p class="section-sub">Board-only — never shown to residents or the public.</p>
+      <div id="cHomeowners"></div>
+    </section>
+
+    <section class="console-card">
+      <h2>Recent sign-ins</h2>
+      <p class="section-sub">Board-only record of who has signed in, most recent first.</p>
+      <div id="cSignins"></div>
+    </section>
+  </main>
+
+<script>
+(function () {
+  "use strict";
+
+  var state = { role: null, content: null, editingHomeowner: null };
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function findById(arr, id) {
+    for (var i = 0; i < (arr || []).length; i++) if (String(arr[i].id) === String(id)) return arr[i];
+    return null;
+  }
+  function metaFromUrl(u) {
+    u = (u || "").toString().toLowerCase();
+    var m = u.match(/\.([a-z0-9]{2,5})(?:[?#]|$)/);
+    return m ? m[1].toUpperCase() : "LINK";
+  }
+  function tag(has) { return has ? '<span class="tag-set">link set</span>' : '<span class="tag-none">no link</span>'; }
+  function fmtTime(iso) { try { return new Date(iso).toLocaleString(); } catch (e) { return iso || ""; } }
+  function panelActions(label) {
+    return '<div class="admin-actions"><button class="admin-btn" type="submit">' + label + '</button><span class="admin-status" data-status></span></div>';
+  }
+
+  // ---------- Section renderers ----------
+  function renderMeetingCard() {
+    var m = state.content.meeting;
+    $("#cMeeting").innerHTML =
+      '<form class="admin-grid" data-set-meeting>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Date &amp; time</label><input name="date" value="' + esc(m.date || "") + '" placeholder="e.g. Aug 14, 2026 · 6:30 PM" /></div>' +
+          '<div class="admin-field"><label>Join link (URL)</label><input name="link" type="url" value="' + esc(m.link || "") + '" placeholder="https://…" /></div>' +
+        '</div>' +
+        '<div class="admin-field"><label>Location / details</label><textarea name="location" rows="2" placeholder="Address or note">' + esc(m.location || "") + '</textarea></div>' +
+        '<div class="admin-field"><label>Agenda link (URL)</label><input name="agenda" type="url" value="' + esc(m.agenda || "") + '" placeholder="https://…" /></div>' +
+        panelActions("Save meeting") +
+      '</form>';
+  }
+
+  function renderDocsCard() {
+    var rows = state.content.documents.map(function (d) {
+      return '<div class="clist-row"><div class="clist-main">' +
+        '<div class="c-title">' + esc(d.title) + '</div>' +
+        '<div class="c-sub">' + esc(d.note || "") + ' · ' + tag(d.hasUrl) + '</div>' +
+        '</div><div class="clist-actions">' +
+          '<button class="mini-btn" type="button" data-doc-edit="' + esc(d.id) + '">Edit</button>' +
+          '<button class="mini-btn danger" type="button" data-doc-del="' + esc(d.id) + '">Delete</button>' +
+        '</div></div>';
+    }).join("");
+    $("#cDocs").innerHTML =
+      '<div class="clist">' + (rows || '<p class="section-sub" style="margin:0;">No documents yet.</p>') + '</div>' +
+      '<div class="admin-add"><h4>Add a document</h4>' +
+      '<p class="hint">Paste a share link (Google Drive, Dropbox…). Homeowner-only.</p>' +
+      '<form class="admin-grid" data-add-doc>' +
+        '<div class="admin-field"><label>Title</label><input name="title" required placeholder="e.g. 2026 Annual Budget" /></div>' +
+        '<div class="admin-field"><label>Description</label><input name="note" placeholder="Short description (optional)" /></div>' +
+        '<div class="admin-field"><label>Link (URL)</label><input name="url" type="url" required placeholder="https://…" /></div>' +
+        panelActions("Add document") +
+      '</form></div>';
+  }
+
+  function renderPastCard() {
+    var rows = state.content.meetings.map(function (mi) {
+      return '<div class="clist-row"><div class="clist-main">' +
+        '<div class="c-title">' + esc(mi.title) + '</div>' +
+        '<div class="c-sub">Agenda: ' + tag(mi.hasAgenda) + ' · Minutes: ' + tag(mi.hasMinutes) + '</div>' +
+        '</div><div class="clist-actions">' +
+          '<button class="mini-btn" type="button" data-mtg-edit="' + esc(mi.id) + '">Edit</button>' +
+          '<button class="mini-btn danger" type="button" data-mtg-del="' + esc(mi.id) + '">Delete</button>' +
+        '</div></div>';
+    }).join("");
+    $("#cPast").innerHTML =
+      '<div class="clist">' + (rows || '<p class="section-sub" style="margin:0;">No past meetings yet.</p>') + '</div>' +
+      '<div class="admin-add"><h4>Add a past meeting</h4>' +
+      '<p class="hint">Links to the agenda and minutes documents. Homeowner-only.</p>' +
+      '<form class="admin-grid" data-add-mtg>' +
+        '<div class="admin-field"><label>Title</label><input name="title" required placeholder="e.g. Board Meeting — Aug 2026" /></div>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Agenda link (URL)</label><input name="agenda" type="url" placeholder="https://…" /></div>' +
+          '<div class="admin-field"><label>Minutes link (URL)</label><input name="minutes" type="url" placeholder="https://…" /></div>' +
+        '</div>' +
+        panelActions("Add meeting") +
+      '</form></div>';
+  }
+
+  function renderBoardCard() {
+    var rows = state.content.board.map(function (b) {
+      var sub = (b.email ? esc(b.email) : "no email") + " · " + (b.phone ? esc(b.phone) : "no phone");
+      return '<div class="clist-row"><div class="clist-main">' +
+        '<div class="c-role">' + esc(b.role) + '</div>' +
+        '<div class="c-title">' + esc(b.name) + '</div>' +
+        '<div class="c-sub">' + sub + '</div>' +
+        '</div><div class="clist-actions">' +
+          '<button class="mini-btn" type="button" data-board-edit="' + esc(b.id) + '">Edit</button>' +
+          '<button class="mini-btn danger" type="button" data-board-del="' + esc(b.id) + '">Remove</button>' +
+        '</div></div>';
+    }).join("");
+    $("#cBoard").innerHTML =
+      '<div class="clist">' + (rows || '<p class="section-sub" style="margin:0;">No board members yet.</p>') + '</div>' +
+      '<div class="admin-add"><h4>Add a board member</h4>' +
+      '<form class="admin-grid" data-add-board>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Role</label><input name="role" required placeholder="e.g. Treasurer" /></div>' +
+          '<div class="admin-field"><label>Name</label><input name="name" required placeholder="Full name" /></div>' +
+        '</div>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Email</label><input name="email" type="email" placeholder="name@example.com" /></div>' +
+          '<div class="admin-field"><label>Phone</label><input name="phone" placeholder="850-555-1234" /></div>' +
+        '</div>' +
+        panelActions("Add board member") +
+      '</form></div>';
+  }
+
+  function duesBadge(status) {
+    var s = (status || "").toLowerCase();
+    var label = s === "paid" ? "Paid" : s === "partial" ? "Partial" : "Unpaid";
+    var cls = s === "paid" ? "dues-paid" : s === "partial" ? "dues-partial" : "dues-unpaid";
+    return '<span class="dues-badge ' + cls + '">' + label + '</span>';
+  }
+
+  function renderHomeownersCard() {
+    var list = state.content.homeowners || [];
+    var table;
+    if (!list.length) {
+      table = '<p class="section-sub" style="margin:0 0 4px;">No homeowners added yet.</p>';
+    } else {
+      var rows = list.map(function (h) {
+        return '<tr>' +
+          '<td>' + esc(h.name) + '</td>' +
+          '<td>' + (h.address ? esc(h.address) : "—") + '</td>' +
+          '<td>' + (h.email ? '<a href="mailto:' + esc(h.email) + '">' + esc(h.email) + '</a>' : "—") + '</td>' +
+          '<td>' + (h.phone ? esc(h.phone) : "—") + '</td>' +
+          '<td>' + duesBadge(h.duesStatus) + '</td>' +
+          '<td>' + (h.amountDue ? esc(h.amountDue) : "—") + '</td>' +
+          '<td class="ho-actions"><button class="mini-btn" type="button" data-ho-edit="' + esc(h.id) + '">Edit</button> ' +
+            '<button class="mini-btn danger" type="button" data-ho-del="' + esc(h.id) + '">Delete</button></td>' +
+        '</tr>';
+      }).join("");
+      table = '<div class="ho-scroll"><table class="ho-table"><thead><tr><th>Name</th><th>Address / lot</th><th>Email</th><th>Phone</th><th>Dues</th><th>Amount due</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+    }
+
+    var editing = state.editingHomeowner ? findById(list, state.editingHomeowner) : null;
+    var v = editing || { name: "", address: "", email: "", phone: "", duesStatus: "unpaid", amountDue: "" };
+    function opt(val, label) { return '<option value="' + val + '"' + (v.duesStatus === val ? " selected" : "") + '>' + label + '</option>'; }
+    var form =
+      '<div class="admin-add"><h4>' + (editing ? "Edit homeowner" : "Add homeowner") + '</h4>' +
+      '<form class="admin-grid" data-save-ho>' +
+        '<input type="hidden" name="id" value="' + esc(editing ? editing.id : "") + '" />' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Name</label><input name="name" required value="' + esc(v.name) + '" /></div>' +
+          '<div class="admin-field"><label>Address / lot</label><input name="address" value="' + esc(v.address) + '" /></div>' +
+        '</div>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Email</label><input name="email" type="email" value="' + esc(v.email) + '" /></div>' +
+          '<div class="admin-field"><label>Phone</label><input name="phone" value="' + esc(v.phone) + '" /></div>' +
+        '</div>' +
+        '<div class="admin-row2">' +
+          '<div class="admin-field"><label>Dues status</label><select name="duesStatus">' + opt("unpaid", "Unpaid") + opt("paid", "Paid") + opt("partial", "Partial") + '</select></div>' +
+          '<div class="admin-field"><label>Amount due</label><input name="amountDue" value="' + esc(v.amountDue) + '" placeholder="e.g. $150 or 0" /></div>' +
+        '</div>' +
+        '<div class="admin-actions"><button class="admin-btn" type="submit">' + (editing ? "Save changes" : "Add homeowner") + '</button>' +
+          (editing ? '<button class="mini-btn" type="button" data-ho-cancel>Cancel</button>' : '') +
+          '<span class="admin-status" data-status></span></div>' +
+      '</form></div>';
+
+    $("#cHomeowners").innerHTML = table + form;
+  }
+
+  function renderSigninsCard() {
+    var list = (state.content.signins) || [];
+    if (!list.length) { $("#cSignins").innerHTML = '<p class="section-sub" style="margin:0;">No sign-ins recorded yet.</p>'; return; }
+    var rows = list.slice(0, 100).map(function (s) {
+      return '<tr><td>' + esc(fmtTime(s.at)) + '</td><td>' + esc(s.email || "—") + '</td><td>' + (s.role === "admin" ? "Board" : "Homeowner") + '</td></tr>';
+    }).join("");
+    $("#cSignins").innerHTML =
+      '<div class="ho-scroll"><table class="ho-table" style="min-width:440px;"><thead><tr><th>When</th><th>Email</th><th>Role</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<button class="mini-btn danger" type="button" data-clear-signins style="margin-top:12px;">Clear log</button>';
+  }
+
+  function renderConsole() {
+    if (!state.content) return;
+    renderMeetingCard();
+    renderDocsCard();
+    renderPastCard();
+    renderBoardCard();
+    renderHomeownersCard();
+    renderSigninsCard();
+  }
+
+  // ---------- Data ----------
+  function fetchContent() {
+    return fetch("/api/content", { headers: { accept: "application/json" } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d) { state.content = d; renderConsole(); } })
+      .catch(function () {});
+  }
+
+  async function adminAction(payload, statusEl) {
+    if (statusEl) statusEl.textContent = "Saving…";
+    try {
+      var r = await fetch("/api/admin/content", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!r.ok) {
+        var msg = "Couldn’t save. Please try again.";
+        try { var e = await r.json(); if (e && e.error) msg = e.error; } catch (x) {}
+        if (statusEl) statusEl.textContent = msg;
+        return false;
+      }
+      state.content = await r.json();
+      renderConsole();
+      return true;
+    } catch (e2) {
+      if (statusEl) statusEl.textContent = "Network error. Please try again.";
+      return false;
+    }
+  }
+
+  // ---------- Auth gate ----------
+  function showConsole() {
+    $("#gate").hidden = true;
+    $("#console").hidden = false;
+    $("#hdrActions").hidden = false;
+    fetchContent();
+  }
+  function showGate(msg) {
+    $("#console").hidden = true;
+    $("#hdrActions").hidden = true;
+    $("#gate").hidden = false;
+    if (msg) $("#gateError").textContent = msg;
+    var inp = $("#gateForm input[name=email]");
+    if (inp) inp.focus();
+  }
+
+  $("#gateForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var fd = new FormData(e.target);
+    var btn = e.target.querySelector('button[type="submit"]');
+    $("#gateError").textContent = "";
+    if (btn) btn.disabled = true;
+    try {
+      var r = await fetch("/api/login", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ code: (fd.get("code") || "").toString(), email: (fd.get("email") || "").toString() }),
+      });
+      if (r.ok) {
+        var data = await r.json();
+        if (data.role === "admin") { state.role = "admin"; showConsole(); }
+        else { $("#gateError").textContent = "That code works, but board access is required here."; }
+      } else {
+        var msg = "That code isn’t recognized.";
+        try { var er = await r.json(); if (er && er.error) msg = er.error; } catch (x) {}
+        $("#gateError").textContent = msg;
+      }
+    } catch (e3) {
+      $("#gateError").textContent = "Couldn’t reach the server. Please try again.";
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  });
+
+  // ---------- Delegated handlers ----------
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest
+      ? e.target.closest("[data-signout],[data-doc-edit],[data-doc-del],[data-mtg-edit],[data-mtg-del],[data-board-edit],[data-board-del],[data-ho-edit],[data-ho-del],[data-ho-cancel],[data-clear-signins]")
+      : null;
+    if (!t) return;
+
+    if (t.hasAttribute("data-signout")) {
+      state.role = null; state.content = null; state.editingHomeowner = null;
+      fetch("/api/logout", { method: "POST" }).catch(function () {}).then(function () { showGate(""); });
+      return;
+    }
+
+    if (t.hasAttribute("data-doc-edit")) {
+      var d = findById(state.content.documents, t.getAttribute("data-doc-edit"));
+      if (!d) return;
+      var dt = window.prompt("Document title", d.title); if (dt === null) return;
+      var du = window.prompt("Link (URL) — leave blank to keep hidden", d.url || ""); if (du === null) return;
+      var dn = window.prompt("Description", d.note || ""); if (dn === null) return;
+      adminAction({ action: "update-document", id: d.id, patch: { title: dt, url: du, note: dn } });
+      return;
+    }
+    if (t.hasAttribute("data-doc-del")) {
+      var d2 = findById(state.content.documents, t.getAttribute("data-doc-del"));
+      if (d2 && window.confirm("Remove “" + d2.title + "”?")) adminAction({ action: "delete-document", id: d2.id });
+      return;
+    }
+
+    if (t.hasAttribute("data-mtg-edit")) {
+      var mtg = findById(state.content.meetings, t.getAttribute("data-mtg-edit"));
+      if (!mtg) return;
+      var mt = window.prompt("Meeting title", mtg.title); if (mt === null) return;
+      var ma = window.prompt("Agenda link (URL) — blank to keep hidden", mtg.agenda || ""); if (ma === null) return;
+      var mn = window.prompt("Minutes link (URL) — blank to keep hidden", mtg.minutes || ""); if (mn === null) return;
+      adminAction({ action: "update-pastmeeting", id: mtg.id, patch: { title: mt, agenda: ma, minutes: mn } });
+      return;
+    }
+    if (t.hasAttribute("data-mtg-del")) {
+      var mtg2 = findById(state.content.meetings, t.getAttribute("data-mtg-del"));
+      if (mtg2 && window.confirm("Remove “" + mtg2.title + "”?")) adminAction({ action: "delete-pastmeeting", id: mtg2.id });
+      return;
+    }
+
+    if (t.hasAttribute("data-board-edit")) {
+      var b = findById(state.content.board, t.getAttribute("data-board-edit"));
+      if (!b) return;
+      var br = window.prompt("Role", b.role); if (br === null) return;
+      var bn = window.prompt("Name", b.name); if (bn === null) return;
+      var be = window.prompt("Email (blank for none)", b.email || ""); if (be === null) return;
+      var bp = window.prompt("Phone (blank for none)", b.phone || ""); if (bp === null) return;
+      adminAction({ action: "update-board", id: b.id, patch: { role: br, name: bn, email: be, phone: bp } });
+      return;
+    }
+    if (t.hasAttribute("data-board-del")) {
+      var b2 = findById(state.content.board, t.getAttribute("data-board-del"));
+      if (b2 && window.confirm("Remove “" + b2.name + "” from the board?")) adminAction({ action: "delete-board", id: b2.id });
+      return;
+    }
+
+    if (t.hasAttribute("data-ho-edit")) {
+      state.editingHomeowner = t.getAttribute("data-ho-edit");
+      renderHomeownersCard();
+      var box = $("#cHomeowners"); if (box && box.scrollIntoView) box.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    if (t.hasAttribute("data-ho-cancel")) { state.editingHomeowner = null; renderHomeownersCard(); return; }
+    if (t.hasAttribute("data-ho-del")) {
+      var h = findById(state.content.homeowners || [], t.getAttribute("data-ho-del"));
+      if (h && window.confirm("Delete “" + h.name + "” from the directory?")) {
+        if (state.editingHomeowner === h.id) state.editingHomeowner = null;
+        adminAction({ action: "delete-homeowner", id: h.id });
+      }
+      return;
+    }
+
+    if (t.hasAttribute("data-clear-signins")) {
+      if (window.confirm("Clear the entire sign-in log?")) adminAction({ action: "clear-signins" });
+      return;
+    }
+  });
+
+  document.addEventListener("submit", function (e) {
+    var f = e.target;
+    var status = f.querySelector ? f.querySelector("[data-status]") : null;
+    if (f.matches("[data-set-meeting]")) {
+      e.preventDefault();
+      var m = new FormData(f);
+      adminAction({ action: "set-meeting", meeting: { date: m.get("date"), location: m.get("location"), link: m.get("link"), agenda: m.get("agenda") } }, status);
+    } else if (f.matches("[data-add-doc]")) {
+      e.preventDefault();
+      var d = new FormData(f); var u = d.get("url");
+      adminAction({ action: "add-document", doc: { title: d.get("title"), note: d.get("note"), url: u, meta: metaFromUrl(u) } }, status);
+    } else if (f.matches("[data-add-mtg]")) {
+      e.preventDefault();
+      var mm = new FormData(f);
+      adminAction({ action: "add-pastmeeting", item: { title: mm.get("title"), agenda: mm.get("agenda"), minutes: mm.get("minutes") } }, status);
+    } else if (f.matches("[data-add-board]")) {
+      e.preventDefault();
+      var b = new FormData(f);
+      adminAction({ action: "add-board", member: { role: b.get("role"), name: b.get("name"), email: b.get("email"), phone: b.get("phone") } }, status);
+    } else if (f.matches("[data-save-ho]")) {
+      e.preventDefault();
+      var h = new FormData(f);
+      var hoId = (h.get("id") || "").toString();
+      var homeowner = { name: h.get("name"), address: h.get("address"), email: h.get("email"), phone: h.get("phone"), duesStatus: h.get("duesStatus"), amountDue: h.get("amountDue") };
+      adminAction(hoId ? { action: "update-homeowner", id: hoId, patch: homeowner } : { action: "add-homeowner", homeowner: homeowner }, status)
+        .then(function (ok) { if (ok) { state.editingHomeowner = null; renderHomeownersCard(); } });
+    }
+  });
+
+  // ---------- Init: check session ----------
+  fetch("/api/session", { headers: { accept: "application/json" } })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (d && d.role === "admin") { state.role = "admin"; showConsole(); }
+      else { showGate(""); }
+    })
+    .catch(function () { showGate(""); });
+})();
+</script>
+</body>
+</html>

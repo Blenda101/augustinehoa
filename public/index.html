@@ -8,324 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Karla:wght@400;500;600&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --cream: #F6F1E6;
-    --cream-2: #EFE8D8;
-    --cream-3: #EFE9DA;
-    --green: #1E3B2A;
-    --green-dark: #16301F;
-    --gold: #9A6B24;
-    --gold-lt: #E3BE7C;
-    --gold-md: #C79A4E;
-    --ink: #23291F;
-    --ink-2: #3E4438;
-    --slate: #4A5142;
-    --muted: #7C7259;
-    --muted-2: #6E7565;
-    --red: #A33F2B;
-    --serif: Lora, Georgia, serif;
-    --sans: Karla, system-ui, sans-serif;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--cream); }
-  body { font-family: var(--sans); color: var(--ink); background: var(--cream); min-height: 100vh; }
-  a { color: var(--green); text-decoration-color: rgba(30,59,42,0.35); text-underline-offset: 3px; }
-  a:hover { color: var(--gold); text-decoration-color: var(--gold); }
-  h1, h2, h3 { font-family: var(--serif); font-weight: 500; }
-  img { max-width: 100%; }
-
-  .wrap { max-width: 1100px; margin: 0 auto; padding-left: 32px; padding-right: 32px; }
-  .rule { border-top: 1px solid rgba(30,59,42,0.14); }
-
-  /* ---------- Header ---------- */
-  .site-header {
-    position: sticky; top: 0; z-index: 20;
-    background: rgba(246,241,230,0.94); backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(30,59,42,0.14);
-  }
-  .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 16px; padding-bottom: 16px; }
-  .brand { text-decoration: none; display: flex; align-items: baseline; gap: 10px; }
-  .brand:hover { color: inherit; }
-  .brand-name { font-family: var(--serif); font-size: 19px; font-weight: 600; color: var(--green); letter-spacing: 0.01em; }
-  .brand-tag { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
-  .nav { display: flex; gap: 26px; font-size: 14px; letter-spacing: 0.01em; }
-  .nav a { text-decoration: none; color: var(--slate); }
-  .nav a:hover { color: var(--green); }
-  .header-actions { display: flex; align-items: center; gap: 12px; }
-  .role-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); white-space: nowrap; }
-  .nav-toggle { display: none; background: transparent; border: 1px solid rgba(30,59,42,0.25); color: var(--slate); width: 40px; height: 38px; border-radius: 2px; cursor: pointer; font-size: 18px; line-height: 1; }
-
-  /* ---------- Buttons ---------- */
-  .btn { font-family: var(--sans); cursor: pointer; border-radius: 2px; }
-  .btn-solid { background: var(--green); color: var(--cream); border: 0; padding: 10px 18px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; }
-  .btn-solid:hover { background: var(--green-dark); color: var(--cream); }
-  .btn-ghost { background: transparent; border: 1px solid rgba(30,59,42,0.25); color: var(--slate); padding: 9px 14px; font-size: 13px; }
-  .btn-ghost:hover { border-color: var(--green); color: var(--green); }
-
-  .cta { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 14px 26px; border-radius: 2px; font-size: 15px; font-weight: 500; letter-spacing: 0.01em; }
-  .cta-solid { background: var(--green); color: var(--cream); }
-  .cta-solid:hover { background: var(--green-dark); color: var(--cream); }
-  .cta-outline { border: 1px solid rgba(30,59,42,0.3); color: var(--green); }
-  .cta-outline:hover { border-color: var(--green); background: rgba(30,59,42,0.05); color: var(--green); }
-
-  /* ---------- Hero ---------- */
-  .hero-img-wrap { width: 100%; aspect-ratio: 1605 / 500; max-height: 460px; overflow: hidden; background: var(--cream-2); }
-  .hero-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 62%; display: block; }
-
-  .intro { padding-top: 72px; padding-bottom: 72px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
-  .eyebrow { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px; }
-  .intro h1 { font-size: 60px; line-height: 1.06; letter-spacing: -0.015em; color: var(--green); margin: 0 0 24px; text-wrap: balance; }
-  .lede { font-size: 18px; line-height: 1.65; color: var(--slate); max-width: 44ch; margin: 0 0 34px; text-wrap: pretty; }
-  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
-
-  .glance { border: 1px solid rgba(30,59,42,0.18); padding: 30px 28px; display: flex; flex-direction: column; gap: 20px; }
-  .glance-title, .kicker { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
-  .glance-rows { display: flex; flex-direction: column; gap: 16px; }
-  .glance-row { display: grid; grid-template-columns: 118px 1fr; gap: 16px; align-items: baseline; padding-bottom: 14px; border-bottom: 1px solid rgba(30,59,42,0.12); }
-  .glance-row:last-child { padding-bottom: 0; border-bottom: 0; }
-  .glance-row .k { font-size: 13px; color: var(--muted); letter-spacing: 0.02em; }
-  .glance-row .v { font-size: 15px; line-height: 1.55; color: var(--ink); }
-  .glance-row .v a { font-size: 14px; }
-
-  section { scroll-margin-top: 84px; }
-  .section-pad { padding-top: 76px; padding-bottom: 76px; }
-  .split { display: grid; grid-template-columns: 260px 1fr; gap: 56px; }
-  .section-h { font-size: 30px; line-height: 1.2; color: var(--green); margin: 0; }
-  .section-sub { font-size: 14px; line-height: 1.6; color: var(--muted); margin: 14px 0 0; }
-  .body-p { font-size: 17px; line-height: 1.7; color: var(--ink-2); margin: 0 0 18px; max-width: 62ch; text-wrap: pretty; }
-  .body-p.last { margin-bottom: 32px; }
-
-  /* ---------- About stats ---------- */
-  .statgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(30,59,42,0.16); border: 1px solid rgba(30,59,42,0.16); }
-  .stat { background: var(--cream); padding: 22px 20px; }
-  .stat .big { font-family: var(--serif); font-size: 26px; color: var(--green); }
-  .stat .sm { font-size: 13px; color: var(--muted); margin-top: 6px; letter-spacing: 0.02em; }
-
-  /* ---------- Board ---------- */
-  .band { background: var(--green); color: var(--cream-2); }
-  .band h2 { color: var(--cream); }
-  .board-head { display: flex; align-items: baseline; justify-content: space-between; gap: 32px; margin-bottom: 40px; flex-wrap: wrap; }
-  .board-head h2 { font-size: 34px; margin: 0; }
-  .board-note { font-size: 14px; color: rgba(239,232,216,0.7); margin: 0; max-width: 42ch; line-height: 1.6; }
-  .signin-banner { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: rgba(227,190,124,0.08); border: 1px solid rgba(227,190,124,0.28); color: var(--gold-lt); font-family: var(--sans); font-size: 14px; padding: 14px 18px; margin-bottom: 26px; cursor: pointer; transition: background 130ms ease; }
-  .signin-banner:hover { background: rgba(227,190,124,0.16); }
-  .signin-banner .msg { color: rgba(239,232,216,0.82); line-height: 1.5; }
-  .signin-banner .link { color: var(--gold-lt); border-bottom: 1px solid rgba(227,190,124,0.5); }
-  .board-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1px; }
-  .member { background: var(--green); box-shadow: 0 0 0 1px rgba(239,232,216,0.18); padding: 26px 22px; display: flex; flex-direction: column; gap: 10px; min-height: 190px; }
-  .member .role { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-md); }
-  .member .name { font-family: var(--serif); font-size: 21px; color: var(--cream); line-height: 1.25; }
-  .member .contact { margin-top: auto; display: flex; flex-direction: column; gap: 5px; font-size: 14px; }
-  .member .contact a.email { color: var(--cream-2); text-decoration: none; border-bottom: 1px solid rgba(239,232,216,0.3); padding-bottom: 2px; word-break: break-all; align-self: flex-start; }
-  .member .contact a.email:hover { color: var(--gold-lt); border-color: var(--gold-lt); }
-  .member .contact a.phone { color: rgba(239,232,216,0.75); text-decoration: none; font-variant-numeric: tabular-nums; }
-  .member .contact a.phone:hover { color: var(--gold-lt); }
-  .member .contact .no-email { color: rgba(239,232,216,0.45); padding-bottom: 2px; }
-  .masked-stack { display: grid; }
-  .masked { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 5px; color: rgba(239,232,216,0.28); letter-spacing: 0.08em; user-select: none; }
-  .masked-btn { grid-area: 1 / 1; display: flex; align-items: center; gap: 8px; background: var(--green); border: 0; color: var(--gold-lt); font-family: var(--sans); font-size: 13px; text-align: left; cursor: pointer; opacity: 0; transition: opacity 130ms ease; }
-  .masked-stack:hover .masked-btn { opacity: 1; }
-  .masked-btn span.lbl { border-bottom: 1px solid rgba(227,190,124,0.5); padding-bottom: 1px; }
-
-  /* ---------- Dues ---------- */
-  .duo { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(30,59,42,0.16); border: 1px solid rgba(30,59,42,0.16); margin-bottom: 34px; }
-  .duo .cell { background: var(--cream); padding: 26px 24px; }
-  .duo .cell .lbl { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
-  .duo .cell .num { font-family: var(--serif); font-size: 40px; color: var(--green); line-height: 1; }
-  .duo .cell .fine { font-size: 13px; color: var(--muted); margin-top: 8px; }
-  .sub-h { font-family: var(--serif); font-weight: 500; font-size: 20px; color: var(--green); margin: 0 0 18px; }
-  .steps { display: flex; flex-direction: column; gap: 14px; }
-  .step { display: grid; grid-template-columns: 24px 1fr; gap: 16px; align-items: start; padding-bottom: 14px; border-bottom: 1px solid rgba(30,59,42,0.12); }
-  .step:last-child { padding-bottom: 0; border-bottom: 0; }
-  .step .n { font-family: var(--serif); font-size: 15px; color: var(--gold); padding-top: 2px; }
-  .step .t { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
-  .step .d { font-size: 15px; line-height: 1.6; color: var(--slate); }
-  .callout { margin-top: 26px; padding: 16px 18px; background: rgba(154,107,36,0.08); border-left: 2px solid var(--gold); font-size: 14px; line-height: 1.6; color: #5A4A2C; }
-
-  /* ---------- Documents ---------- */
-  .tint { background: var(--cream-3); border-top: 1px solid rgba(30,59,42,0.14); border-bottom: 1px solid rgba(30,59,42,0.14); }
-  .doc-list { display: flex; flex-direction: column; }
-  .doc { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; padding: 18px 8px; border-bottom: 1px solid rgba(30,59,42,0.16); }
-  .doc:hover { background: rgba(30,59,42,0.045); }
-  .doc .title-row { display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
-  .doc .lock { font-size: 12px; color: var(--gold); }
-  .doc .title { font-family: var(--serif); font-size: 20px; color: var(--green); }
-  .doc .note { font-size: 14px; color: var(--muted-2); line-height: 1.55; }
-  .doc-actions { display: flex; align-items: center; gap: 14px; }
-  .edit-btns { display: flex; gap: 8px; }
-  .mini-btn { background: transparent; border: 1px solid rgba(30,59,42,0.25); color: var(--slate); padding: 7px 12px; font-family: var(--sans); font-size: 12px; cursor: pointer; }
-  .mini-btn:hover { border-color: var(--green); color: var(--green); }
-  .mini-btn.danger:hover { border-color: var(--red); color: var(--red); }
-  .doc-meta-stack { display: grid; justify-items: end; }
-  .doc-meta { grid-area: 1 / 1; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(110,117,101,0.55); white-space: nowrap; }
-  .doc-signin { grid-area: 1 / 1; background: var(--cream-3); border: 0; padding: 0; color: var(--gold); font-family: var(--sans); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; white-space: nowrap; opacity: 0; transition: opacity 130ms ease; }
-  .doc-meta-stack:hover .doc-signin { opacity: 1; }
-  .doc-dl { text-decoration: none; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); white-space: nowrap; border-bottom: 1px solid rgba(154,107,36,0.4); padding-bottom: 2px; }
-  .doc-dl:hover { color: var(--green); border-color: var(--green); }
-  .dropzone { margin-top: 20px; border: 2px dashed rgba(30,59,42,0.28); background: transparent; padding: 34px 24px; text-align: center; transition: background 120ms ease, border-color 120ms ease; }
-  .dropzone.drag { border-color: var(--green); background: rgba(30,59,42,0.08); }
-  .dropzone .dz-title { font-family: var(--serif); font-size: 19px; color: var(--green); margin-bottom: 6px; }
-  .dropzone .dz-sub { font-size: 14px; color: var(--muted-2); }
-  .dropzone .dz-browse { color: var(--gold); text-decoration: underline; cursor: pointer; }
-  .docs-note { font-size: 14px; line-height: 1.6; color: var(--muted-2); margin: 22px 0 0; }
-
-  /* ---------- Meetings ---------- */
-  /* Unified Meetings & minutes card */
-  .meeting-card { border: 1px solid rgba(30,59,42,0.18); }
-  .mc-section { padding: 26px; }
-  .mc-section + .mc-section { border-top: 1px solid rgba(30,59,42,0.14); }
-  .mc-section .kicker { display: block; margin-bottom: 10px; }
-  .meeting-card .date { font-family: var(--serif); font-size: 28px; color: var(--green); line-height: 1.25; margin-bottom: 6px; }
-  .meeting-card .where { font-size: 15px; color: var(--slate); line-height: 1.55; }
-  .mc-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
-  .join { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 12px 22px; font-size: 14px; font-weight: 600; white-space: nowrap; }
-  .join.active { background: var(--green); color: var(--cream); }
-  .join.active:hover { background: var(--green-dark); color: var(--cream); }
-  .join-stack { display: grid; }
-  .join.disabled { grid-area: 1 / 1; border: 1px solid rgba(30,59,42,0.18); color: rgba(110,117,101,0.65); }
-  .join-signin { grid-area: 1 / 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--green); border: 0; color: var(--cream); padding: 12px 22px; font-family: var(--sans); font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; opacity: 0; transition: opacity 130ms ease; }
-  .join-stack:hover .join-signin { opacity: 1; }
-  .mc-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; border: 1px solid rgba(30,59,42,0.3); color: var(--green); background: transparent; font-family: var(--sans); padding: 12px 22px; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; }
-  .mc-btn:hover { background: rgba(30,59,42,0.06); color: var(--green); }
-  .mc-btn.disabled { color: rgba(110,117,101,0.6); border-color: rgba(30,59,42,0.18); cursor: default; background: transparent; }
-  /* Past-meeting rows */
-  .pm-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(30,59,42,0.12); }
-  .pm-row:last-child { border-bottom: 0; padding-bottom: 0; }
-  .pm-title { font-size: 16px; color: var(--ink); }
-  .pm-links { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-  .pm-link { text-decoration: none; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(154,107,36,0.4); padding: 5px 10px; border-radius: 2px; white-space: nowrap; }
-  .pm-link:hover { color: var(--green); border-color: var(--green); }
-  .pm-none { font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(110,117,101,0.5); padding: 5px 4px; }
-  .pm-locked { background: transparent; border: 1px solid rgba(30,59,42,0.2); color: var(--muted); font-family: var(--sans); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; padding: 5px 10px; border-radius: 2px; cursor: pointer; white-space: nowrap; }
-  .pm-locked:hover { border-color: var(--gold); color: var(--gold); }
-
-  /* ---------- Contact ---------- */
-  .contact-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; }
-  .contact-grid h2 { font-size: 34px; margin: 0 0 18px; line-height: 1.15; }
-  .contact-lede { font-size: 16px; line-height: 1.7; color: rgba(239,232,216,0.78); margin: 0 0 34px; max-width: 40ch; text-wrap: pretty; }
-  .contact-block + .contact-block { margin-top: 22px; }
-  .contact-block .lbl { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-md); margin-bottom: 8px; }
-  .contact-block .val { font-size: 16px; line-height: 1.6; color: var(--cream-2); }
-  .contact-block .val a { color: var(--cream-2); text-decoration: none; border-bottom: 1px solid rgba(239,232,216,0.3); }
-  .contact-block .val a:hover { color: var(--gold-lt); border-color: var(--gold-lt); }
-  .contact-form { display: flex; flex-direction: column; gap: 18px; background: rgba(246,241,230,0.06); border: 1px solid rgba(239,232,216,0.18); padding: 32px; }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  .field { display: flex; flex-direction: column; gap: 7px; }
-  .field > span { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(239,232,216,0.65); }
-  .field input, .field textarea, .field select { background: transparent; border: 0; border-bottom: 1px solid rgba(239,232,216,0.35); color: var(--cream); font-family: var(--sans); font-size: 16px; padding: 9px 0; outline: none; }
-  .field textarea { resize: vertical; }
-  .field select { background: var(--green); }
-  .field select option { color: var(--ink); }
-  .field input:focus, .field textarea:focus, .field select:focus { border-bottom-color: var(--gold-lt); }
-  .submit { margin-top: 6px; background: var(--gold-lt); color: var(--green); border: 0; padding: 15px 26px; font-family: var(--sans); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; align-self: flex-start; }
-  .submit:hover { background: var(--cream); }
-  .submit:disabled { cursor: default; opacity: 0.85; }
-  .form-note { font-size: 13px; color: rgba(239,232,216,0.55); line-height: 1.6; }
-
-  /* ---------- Sign-in modal ---------- */
-  .overlay { position: fixed; inset: 0; z-index: 60; background: rgba(22,48,31,0.55); display: flex; align-items: flex-start; justify-content: center; padding: 24px; overflow: auto; }
-  .overlay[hidden] { display: none; }
-  .modal { background: var(--cream); width: 100%; max-width: 440px; margin: auto; padding: 38px 36px; border: 1px solid rgba(30,59,42,0.2); box-shadow: 0 24px 60px rgba(22,48,31,0.3); }
-  .modal .kick { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
-  .modal h3 { font-size: 28px; color: var(--green); margin: 0 0 12px; line-height: 1.2; }
-  .modal p { font-size: 15px; line-height: 1.6; color: var(--slate); margin: 0 0 26px; }
-  .modal form { display: flex; flex-direction: column; gap: 20px; }
-  .modal .field > span { color: var(--muted); }
-  .modal .field input { color: var(--ink); border-bottom: 1px solid rgba(30,59,42,0.3); }
-  .modal .field input:focus { border-bottom-color: var(--green); }
-  .modal .signin-error { font-size: 14px; color: var(--red); }
-  .modal .signin-error[hidden] { display: none; }
-  .modal .submit-dark { background: var(--green); color: var(--cream); border: 0; padding: 14px 24px; font-family: var(--sans); font-size: 15px; font-weight: 600; cursor: pointer; }
-  .modal .submit-dark:hover { background: var(--green-dark); }
-  .modal .demo { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(30,59,42,0.14); font-size: 13px; line-height: 1.6; color: var(--muted); }
-
-  /* ---------- Footer ---------- */
-  .site-footer { background: var(--green-dark); color: rgba(239,232,216,0.6); }
-  .footer-inner { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center; font-size: 13px; padding-top: 34px; padding-bottom: 34px; }
-
-  /* ---------- Admin editors (board members only) ---------- */
-  .admin-add { margin-top: 20px; border: 1px dashed rgba(30,59,42,0.3); background: rgba(30,59,42,0.03); padding: 20px; }
-  .admin-badge { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
-  .admin-add h4 { font-family: var(--serif); font-weight: 500; font-size: 17px; color: var(--green); margin: 0 0 4px; }
-  .admin-add .hint { font-size: 13px; color: var(--muted-2); margin: 0 0 14px; line-height: 1.5; }
-  .admin-grid { display: grid; gap: 12px; }
-  .admin-field { display: flex; flex-direction: column; gap: 5px; }
-  .admin-field > label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-  .admin-field input, .admin-field textarea { background: var(--cream); border: 1px solid rgba(30,59,42,0.25); color: var(--ink); font-family: var(--sans); font-size: 15px; padding: 9px 11px; outline: none; border-radius: 2px; width: 100%; }
-  .admin-field input:focus, .admin-field textarea:focus { border-color: var(--green); }
-  .admin-field textarea { resize: vertical; }
-  .admin-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .admin-btn { background: var(--green); color: var(--cream); border: 0; padding: 10px 18px; font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 2px; justify-self: start; }
-  .admin-btn:hover { background: var(--green-dark); }
-  .admin-btn:disabled { opacity: 0.6; cursor: default; }
-  .admin-status { font-size: 13px; color: var(--gold); min-height: 1.2em; }
-  .admin-field select { background: var(--cream); border: 1px solid rgba(30,59,42,0.25); color: var(--ink); font-family: var(--sans); font-size: 15px; padding: 9px 11px; outline: none; border-radius: 2px; width: 100%; }
-  .admin-field select:focus { border-color: var(--green); }
-  .admin-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  @media (max-width: 520px) { .admin-row2 { grid-template-columns: 1fr; } }
-
-  /* Collapsed editor triggers */
-  .panel-toggle { margin-top: 20px; width: 100%; text-align: left; background: transparent; border: 1px dashed rgba(30,59,42,0.4); color: var(--green); font-family: var(--sans); font-size: 14px; font-weight: 600; padding: 12px 18px; cursor: pointer; border-radius: 2px; transition: background 120ms ease, border-color 120ms ease; }
-  .panel-toggle:hover { background: rgba(30,59,42,0.05); border-color: var(--green); }
-  .panel-toggle.on-dark { border-color: rgba(239,232,216,0.35); color: var(--gold-lt); }
-  .panel-toggle.on-dark:hover { background: rgba(246,241,230,0.06); border-color: var(--gold-lt); }
-  @keyframes panelIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
-  .admin-add { animation: panelIn 140ms ease; }
-
-  /* Admin panel on the dark board section */
-  .admin-add.on-dark { border-color: rgba(239,232,216,0.28); background: rgba(246,241,230,0.06); }
-  .admin-add.on-dark .admin-badge { color: var(--gold-lt); }
-  .admin-add.on-dark h4 { color: var(--cream); }
-  .admin-add.on-dark .hint { color: rgba(239,232,216,0.7); }
-  .admin-add.on-dark .admin-field > label { color: rgba(239,232,216,0.7); }
-
-  .mini-btn-dark { background: transparent; border: 1px solid rgba(239,232,216,0.35); color: var(--cream-2); padding: 6px 11px; font-family: var(--sans); font-size: 12px; cursor: pointer; border-radius: 2px; }
-  .mini-btn-dark:hover { border-color: var(--gold-lt); color: var(--gold-lt); }
-  .mini-btn-dark.danger:hover { border-color: #E58C74; color: #E58C74; }
-  .member-admin { display: flex; gap: 8px; margin-top: 12px; }
-
-  /* Homeowner directory table (board-only) */
-  .ho-scroll { overflow-x: auto; border: 1px solid rgba(30,59,42,0.16); margin-bottom: 4px; }
-  .ho-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px; }
-  .ho-table th { text-align: left; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 12px 14px; border-bottom: 1px solid rgba(30,59,42,0.16); background: rgba(30,59,42,0.03); }
-  .ho-table td { padding: 12px 14px; border-bottom: 1px solid rgba(30,59,42,0.1); color: var(--ink); vertical-align: middle; }
-  .ho-table tr:last-child td { border-bottom: 0; }
-  .ho-actions { white-space: nowrap; }
-  .dues-badge { display: inline-block; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; font-weight: 600; }
-  .dues-paid { background: rgba(46,107,67,0.14); color: #2E6B43; }
-  .dues-unpaid { background: rgba(163,63,43,0.12); color: var(--red); }
-  .dues-partial { background: rgba(154,107,36,0.16); color: var(--gold); }
-
-  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  [hidden] { display: none !important; }
-
-  /* ---------- Responsive ---------- */
-  @media (max-width: 860px) {
-    .wrap { padding-left: 22px; padding-right: 22px; }
-    .nav { display: none; }
-    .nav.open { display: flex; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; gap: 0; background: var(--cream); border-bottom: 1px solid rgba(30,59,42,0.14); padding: 8px 22px 16px; }
-    .nav.open a { padding: 12px 0; border-bottom: 1px solid rgba(30,59,42,0.08); }
-    .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
-    .site-header { position: sticky; }
-    .header-inner { position: relative; }
-    .intro { grid-template-columns: 1fr; gap: 36px; padding-top: 48px; padding-bottom: 48px; }
-    .intro h1 { font-size: 42px; }
-    .split { grid-template-columns: 1fr; gap: 28px; }
-    .section-pad { padding-top: 52px; padding-bottom: 52px; }
-    .statgrid { grid-template-columns: 1fr; }
-    .duo { grid-template-columns: 1fr; }
-    .next-meeting { grid-template-columns: 1fr; }
-    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-    .field-row { grid-template-columns: 1fr; }
-    .board-grid { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 520px) {
-    .intro h1 { font-size: 34px; }
-    .glance-row { grid-template-columns: 1fr; gap: 4px; }
-  }
-  @media print { .no-print { display: none !important; } }
-</style>
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
@@ -341,12 +24,12 @@
         <a href="#dues">Dues</a>
         <a href="#documents">Documents</a>
         <a href="#meetings">Meetings</a>
-        <a href="#homeowners" data-when="isAdmin" hidden>Homeowners</a>
         <a href="#contact">Contact</a>
       </nav>
       <div class="header-actions">
         <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
         <button class="btn btn-solid" data-open-signin data-when="signedOut">Resident sign in</button>
+        <a class="console-link" href="board.html" data-when="isAdmin" hidden>Board console →</a>
         <span class="role-label" data-when="signedIn" data-role-label hidden></span>
         <button class="btn btn-ghost" data-signout data-when="signedIn" hidden>Sign out</button>
       </div>
@@ -414,7 +97,6 @@
         <span class="msg">Emails and phone numbers are hidden from the public web. <span class="link">Sign in as a homeowner</span> to reveal them.</span>
       </button>
       <div class="board-grid" id="boardGrid"></div>
-      <div id="boardAdmin" hidden></div>
     </div>
   </section>
 
@@ -461,7 +143,7 @@
             </div>
           </div>
         </div>
-        <div class="callout">Dollar amounts and dates above are placeholders — send me the real figures and I'll drop them in.</div>
+        <div class="callout">The annual assessment amount above is a placeholder — send me the figure and I'll drop it in.</div>
       </div>
     </div>
   </section>
@@ -475,8 +157,7 @@
         </div>
         <div>
           <div class="doc-list" id="docList"></div>
-          <div id="docsAdmin" hidden></div>
-          <p class="docs-note" id="docsNote"></p>
+          <p class="docs-note" id="docsNote">Realtors and title companies requesting an estoppel letter should contact the treasurer.</p>
         </div>
       </div>
     </div>
@@ -495,28 +176,12 @@
             <div class="date" id="meetingDate">Date to be announced</div>
             <div class="where" id="meetingWhere">Location and agenda will be posted here and emailed to homeowners.</div>
             <div class="mc-actions" id="nextActions"></div>
-            <div id="meetingAdmin" hidden></div>
           </div>
           <div class="mc-section">
             <div class="kicker">Past meetings</div>
             <div id="meetingsList"></div>
-            <div id="pastMeetingAdmin" hidden></div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="homeowners" class="wrap section-pad" data-when="isAdmin" hidden>
-    <div class="split">
-      <div>
-        <h2 class="section-h">Homeowner directory</h2>
-        <p class="section-sub">Board members only — never shown to residents. Track contact details and dues status here.</p>
-      </div>
-      <div>
-        <div id="homeownersTable"></div>
-        <div id="homeownersAdmin"></div>
-        <div id="signinsPanel"></div>
       </div>
     </div>
   </section>
@@ -603,22 +268,8 @@
 (function () {
   "use strict";
 
-  // ---------- State ----------
-  // The board roster, documents, meeting, minutes, and (for admins) the homeowner
-  // directory all come from /api/content. Contact details / links / PII are gated
-  // server-side, so nothing sensitive lives in this bundle.
-  var state = {
-    role: null,        // null | "resident" | "admin"
-    content: null,     // { board, meeting, documents, minutes, isAdmin, homeowners? }
-    editingHomeowner: null,
-    // Which admin editors are expanded. Collapsed by default so the board view
-    // stays clean; each opens on demand.
-    panels: { docs: false, minutes: false, meeting: false, board: false, homeowner: false },
-    signInOpen: false,
-    sent: false,
-  };
+  var state = { role: null, content: null, signInOpen: false, sent: false };
 
-  // Fallback content shown before /api/content resolves (or if it fails).
   var FALLBACK_CONTENT = {
     board: [
       { id: "pres",  role: "President",       name: "Jacqueline Roumou", hasEmail: true,  email: "", phone: "" },
@@ -640,24 +291,19 @@
       { id: "board",  title: "Board Meeting",  hasAgenda: false, agenda: "", hasMinutes: false, minutes: "" },
     ],
   };
-
   function content() { return state.content || FALLBACK_CONTENT; }
 
-  var $ = function (sel, root) { return (root || document).querySelector(sel); };
-  var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
-
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
-  function telHref(phone) { return "tel:+1" + phone.replace(/\D/g, ""); }
-
-  // ---------- Derived ----------
+  function telHref(p) { return "tel:+1" + p.replace(/\D/g, ""); }
   function signedIn() { return state.role === "resident" || state.role === "admin"; }
   function isAdmin() { return state.role === "admin"; }
 
-  // ---------- Render ----------
   function renderVisibility() {
     var si = signedIn(), admin = isAdmin();
     $$("[data-when]").forEach(function (el) {
@@ -670,127 +316,43 @@
   }
 
   function renderBoard() {
-    var si = signedIn(), admin = isAdmin();
-    var grid = $("#boardGrid");
-    grid.innerHTML = content().board.map(function (m) {
+    var si = signedIn();
+    $("#boardGrid").innerHTML = content().board.map(function (m) {
       var contact;
       if (si) {
         var emailLine = m.email
           ? '<a class="email" href="mailto:' + esc(m.email) + '">' + esc(m.email) + '</a>'
           : '<span class="no-email">Reach by phone</span>';
-        var phoneLine = m.phone
-          ? '<a class="phone" href="' + telHref(m.phone) + '">' + esc(m.phone) + '</a>'
-          : '';
+        var phoneLine = m.phone ? '<a class="phone" href="' + telHref(m.phone) + '">' + esc(m.phone) + '</a>' : '';
         contact = emailLine + phoneLine;
       } else {
         var maskedEmail = m.hasEmail ? "••••••••@•••••.com" : "—";
         contact =
           '<div class="masked-stack">' +
             '<div class="masked"><span>' + maskedEmail + '</span><span>•••-•••-••••</span></div>' +
-            '<button class="masked-btn" data-open-signin type="button">' +
-              '<span style="font-size:12px;">🔒</span>' +
-              '<span class="lbl">Sign in to view contact</span>' +
-            '</button>' +
+            '<button class="masked-btn" data-open-signin type="button"><span style="font-size:12px;">🔒</span><span class="lbl">Sign in to view contact</span></button>' +
           '</div>';
       }
-      var adminBtns = admin
-        ? '<div class="member-admin">' +
-            '<button class="mini-btn-dark" type="button" data-board-edit="' + esc(m.id) + '">Edit</button>' +
-            '<button class="mini-btn-dark danger" type="button" data-board-del="' + esc(m.id) + '">Remove</button>' +
-          '</div>'
-        : '';
-      return (
-        '<div class="member">' +
-          '<div class="role">' + esc(m.role) + '</div>' +
-          '<div class="name">' + esc(m.name) + '</div>' +
-          '<div class="contact">' + contact + '</div>' +
-          adminBtns +
-        '</div>'
-      );
+      return '<div class="member"><div class="role">' + esc(m.role) + '</div><div class="name">' + esc(m.name) + '</div><div class="contact">' + contact + '</div></div>';
     }).join("");
-    renderBoardAdmin();
   }
 
   function renderDocs() {
-    var si = signedIn(), admin = isAdmin();
-    var list = $("#docList");
-    list.innerHTML = content().documents.map(function (d) {
-      var left =
-        '<div>' +
-          '<div class="title-row">' +
-            (!si ? '<span class="lock">🔒</span>' : '') +
-            '<span class="title">' + esc(d.title) + '</span>' +
-          '</div>' +
-          '<div class="note">' + esc(d.note) + '</div>' +
-        '</div>';
-
-      var editBtns = admin
-        ? '<div class="edit-btns">' +
-            '<button class="mini-btn" type="button" data-doc-edit="' + esc(d.id) + '">Edit</button>' +
-            '<button class="mini-btn danger" type="button" data-doc-del="' + esc(d.id) + '">Delete</button>' +
-          '</div>'
-        : '';
-
+    var si = signedIn();
+    $("#docList").innerHTML = content().documents.map(function (d) {
+      var left = '<div><div class="title-row">' + (!si ? '<span class="lock">🔒</span>' : '') +
+        '<span class="title">' + esc(d.title) + '</span></div><div class="note">' + esc(d.note) + '</div></div>';
       var access;
       if (si) {
         access = d.hasUrl
           ? '<a class="doc-dl" href="' + esc(d.url) + '" target="_blank" rel="noopener">Download ' + esc(d.meta) + '</a>'
           : '<span class="doc-meta">Not posted yet</span>';
       } else {
-        access = '<div class="doc-meta-stack">' +
-            '<span class="doc-meta">' + esc(d.meta) + '</span>' +
-            '<button class="doc-signin" type="button" data-open-signin>Sign in to download</button>' +
-          '</div>';
+        access = '<div class="doc-meta-stack"><span class="doc-meta">' + esc(d.meta) + '</span>' +
+          '<button class="doc-signin" type="button" data-open-signin>Sign in to download</button></div>';
       }
-
-      return (
-        '<div class="doc">' + left +
-          '<div class="doc-actions">' + editBtns + access + '</div>' +
-        '</div>'
-      );
+      return '<div class="doc">' + left + '<div class="doc-actions">' + access + '</div></div>';
     }).join("");
-
-    $("#docsNote").textContent = admin
-      ? "Add a document with a share link (Google Drive, Dropbox, etc.). Links are visible only to signed-in homeowners. Estoppel requests should go to the treasurer."
-      : "Realtors and title companies requesting an estoppel letter should contact the treasurer.";
-
-    renderDocsAdmin();
-  }
-
-  function renderPastMeetings() {
-    var si = signedIn(), admin = isAdmin();
-    var list = $("#meetingsList");
-    var items = content().meetings;
-
-    function docLink(has, url, label) {
-      if (si) {
-        return (has && url)
-          ? '<a class="pm-link" href="' + esc(url) + '" target="_blank" rel="noopener">' + label + ' ↗</a>'
-          : '<span class="pm-none">No ' + label.toLowerCase() + '</span>';
-      }
-      return '<button class="pm-locked" type="button" data-open-signin>🔒 ' + label + '</button>';
-    }
-
-    if (!items.length) {
-      list.innerHTML = '<p class="section-sub" style="margin:0;">No past meetings posted yet.</p>';
-    } else {
-      list.innerHTML = items.map(function (mi) {
-        var adminBtns = admin
-          ? '<button class="mini-btn" type="button" data-mtg-edit="' + esc(mi.id) + '">Edit</button>' +
-            '<button class="mini-btn danger" type="button" data-mtg-del="' + esc(mi.id) + '">Delete</button>'
-          : '';
-        return '<div class="pm-row">' +
-          '<span class="pm-title">' + esc(mi.title) + '</span>' +
-          '<div class="pm-links">' +
-            docLink(mi.hasAgenda, mi.agenda, "Agenda") +
-            docLink(mi.hasMinutes, mi.minutes, "Minutes") +
-            adminBtns +
-          '</div>' +
-        '</div>';
-      }).join("");
-    }
-
-    renderPastMeetingAdmin();
   }
 
   function renderMeeting() {
@@ -798,19 +360,15 @@
     var m = content().meeting;
     $("#meetingDate").textContent = m.date || "Date to be announced";
     $("#meetingWhere").textContent = m.location || "";
-
     var join;
     if (si) {
       join = (m.hasLink && m.link)
         ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener" class="join active">Join the meeting</a>'
         : '<span class="join disabled">Link not posted yet</span>';
     } else {
-      join = '<div class="join-stack">' +
-          '<span class="join disabled">Join the meeting</span>' +
-          '<button class="join-signin" type="button" data-open-signin>🔒 Sign in to join</button>' +
-        '</div>';
+      join = '<div class="join-stack"><span class="join disabled">Join the meeting</span>' +
+        '<button class="join-signin" type="button" data-open-signin>🔒 Sign in to join</button></div>';
     }
-
     var agenda;
     if (si) {
       agenda = (m.hasAgenda && m.agenda)
@@ -819,211 +377,26 @@
     } else {
       agenda = '<button class="mc-btn" type="button" data-open-signin>🔒 Agenda</button>';
     }
-
     $("#nextActions").innerHTML = join + agenda;
-    renderMeetingAdmin();
   }
 
-  // ---------- Admin editors ----------
-  // Collapsed by default (just a trigger button); expands to the form on demand.
-  function adminPanel(key, onDark, triggerLabel, formHtml) {
-    var dark = onDark ? " on-dark" : "";
-    if (!state.panels[key]) {
-      return '<button class="panel-toggle' + dark + '" type="button" data-toggle-panel="' + key + '">' + triggerLabel + '</button>';
+  function renderPastMeetings() {
+    var si = signedIn();
+    function docLink(has, url, label) {
+      if (si) {
+        return (has && url)
+          ? '<a class="pm-link" href="' + esc(url) + '" target="_blank" rel="noopener">' + label + ' ↗</a>'
+          : '<span class="pm-none">No ' + label.toLowerCase() + '</span>';
+      }
+      return '<button class="pm-locked" type="button" data-open-signin>🔒 ' + label + '</button>';
     }
-    return '<div class="admin-add' + dark + '">' + formHtml + '</div>';
-  }
-
-  function panelActions(submitLabel, panelKey) {
-    return '<div class="admin-actions">' +
-      '<button class="admin-btn" type="submit">' + submitLabel + '</button>' +
-      '<button class="mini-btn" type="button" data-toggle-panel="' + panelKey + '">Cancel</button>' +
-      '<span class="admin-status" data-status></span>' +
-    '</div>';
-  }
-
-  function renderDocsAdmin() {
-    var box = $("#docsAdmin");
-    if (!isAdmin()) { box.hidden = true; box.innerHTML = ""; return; }
-    box.hidden = false;
-    var form =
-      '<div class="admin-badge">🔧 Board tools</div>' +
-      '<h4>Add a document</h4>' +
-      '<p class="hint">Paste a share link (Google Drive, Dropbox…). It appears above and is downloadable by signed-in homeowners.</p>' +
-      '<form class="admin-grid" data-add-doc>' +
-        '<div class="admin-field"><label>Title</label><input name="title" required placeholder="e.g. 2026 Annual Budget" /></div>' +
-        '<div class="admin-field"><label>Description</label><input name="note" placeholder="Short description (optional)" /></div>' +
-        '<div class="admin-field"><label>Link (URL)</label><input name="url" type="url" required placeholder="https://…" /></div>' +
-        panelActions("Add document", "docs") +
-      '</form>';
-    box.innerHTML = adminPanel("docs", false, "+ Add a document", form);
-  }
-
-  function renderPastMeetingAdmin() {
-    var box = $("#pastMeetingAdmin");
-    if (!box) return;
-    if (!isAdmin()) { box.hidden = true; box.innerHTML = ""; return; }
-    box.hidden = false;
-    var form =
-      '<div class="admin-badge">🔧 Board tools</div>' +
-      '<h4>Add a past meeting</h4>' +
-      '<p class="hint">Add a meeting with links to its agenda and minutes documents (Google Drive, Dropbox…). Both show only to signed-in homeowners.</p>' +
-      '<form class="admin-grid" data-add-mtg>' +
-        '<div class="admin-field"><label>Title</label><input name="title" required placeholder="e.g. Board Meeting — Aug 2026" /></div>' +
-        '<div class="admin-row2">' +
-          '<div class="admin-field"><label>Agenda link (URL)</label><input name="agenda" type="url" placeholder="https://…" /></div>' +
-          '<div class="admin-field"><label>Minutes link (URL)</label><input name="minutes" type="url" placeholder="https://…" /></div>' +
-        '</div>' +
-        panelActions("Add meeting", "minutes") +
-      '</form>';
-    box.innerHTML = adminPanel("minutes", false, "+ Add a past meeting", form);
-  }
-
-  function renderMeetingAdmin() {
-    var box = $("#meetingAdmin");
-    if (!isAdmin()) { box.hidden = true; box.innerHTML = ""; return; }
-    var m = content().meeting;
-    box.hidden = false;
-    var form =
-      '<div class="admin-badge">🔧 Board tools</div>' +
-      '<h4>Edit next meeting</h4>' +
-      '<p class="hint">Set the date, location, a join link (Zoom, Google Meet…), and a link to the agenda document. Links show only to signed-in homeowners.</p>' +
-      '<form class="admin-grid" data-set-meeting>' +
-        '<div class="admin-row2">' +
-          '<div class="admin-field"><label>Date &amp; time</label><input name="date" value="' + esc(m.date || "") + '" placeholder="e.g. Aug 14, 2026 · 6:30 PM" /></div>' +
-          '<div class="admin-field"><label>Join link (URL)</label><input name="link" type="url" value="' + esc(m.link || "") + '" placeholder="https://…" /></div>' +
-        '</div>' +
-        '<div class="admin-field"><label>Location / details</label><textarea name="location" rows="2" placeholder="Address or note">' + esc(m.location || "") + '</textarea></div>' +
-        '<div class="admin-field"><label>Agenda link (URL)</label><input name="agenda" type="url" value="' + esc(m.agenda || "") + '" placeholder="https://…" /></div>' +
-        panelActions("Save meeting", "meeting") +
-      '</form>';
-    box.innerHTML = adminPanel("meeting", false, "Edit next meeting", form);
-  }
-
-  function renderBoardAdmin() {
-    var box = $("#boardAdmin");
-    if (!box) return;
-    if (!isAdmin()) { box.hidden = true; box.innerHTML = ""; return; }
-    box.hidden = false;
-    var form =
-      '<div class="admin-badge">🔧 Board tools</div>' +
-      '<h4>Add a board member</h4>' +
-      '<p class="hint">Name and role are public. Email and phone show only to signed-in homeowners.</p>' +
-      '<form class="admin-grid" data-add-board>' +
-        '<div class="admin-row2">' +
-          '<div class="admin-field"><label>Role</label><input name="role" required placeholder="e.g. Treasurer" /></div>' +
-          '<div class="admin-field"><label>Name</label><input name="name" required placeholder="Full name" /></div>' +
-        '</div>' +
-        '<div class="admin-row2">' +
-          '<div class="admin-field"><label>Email</label><input name="email" type="email" placeholder="name@example.com" /></div>' +
-          '<div class="admin-field"><label>Phone</label><input name="phone" placeholder="850-555-1234" /></div>' +
-        '</div>' +
-        panelActions("Add board member", "board") +
-      '</form>';
-    box.innerHTML = adminPanel("board", true, "+ Add a board member", form);
-  }
-
-  function duesBadge(status) {
-    var s = (status || "").toLowerCase();
-    var label = s === "paid" ? "Paid" : s === "partial" ? "Partial" : "Unpaid";
-    return '<span class="dues-badge dues-' + (s === "paid" ? "paid" : s === "partial" ? "partial" : "unpaid") + '">' + label + '</span>';
-  }
-
-  function renderHomeowners() {
-    var wrap = $("#homeownersTable");
-    if (!wrap) return;
-    if (!isAdmin()) { wrap.innerHTML = ""; var ha = $("#homeownersAdmin"); if (ha) ha.innerHTML = ""; return; }
-    var list = (state.content && state.content.homeowners) || [];
-    if (!list.length) {
-      wrap.innerHTML = '<p class="hint" style="margin:0;">No homeowners added yet. Use the form below to add the first one.</p>';
-    } else {
-      var rows = list.map(function (h) {
-        return '<tr>' +
-          '<td>' + esc(h.name) + '</td>' +
-          '<td>' + (h.address ? esc(h.address) : "—") + '</td>' +
-          '<td>' + (h.email ? '<a href="mailto:' + esc(h.email) + '">' + esc(h.email) + '</a>' : "—") + '</td>' +
-          '<td>' + (h.phone ? esc(h.phone) : "—") + '</td>' +
-          '<td>' + duesBadge(h.duesStatus) + '</td>' +
-          '<td>' + (h.amountDue ? esc(h.amountDue) : "—") + '</td>' +
-          '<td class="ho-actions">' +
-            '<button class="mini-btn" type="button" data-ho-edit="' + esc(h.id) + '">Edit</button> ' +
-            '<button class="mini-btn danger" type="button" data-ho-del="' + esc(h.id) + '">Delete</button>' +
-          '</td>' +
-        '</tr>';
-      }).join("");
-      wrap.innerHTML =
-        '<div class="ho-scroll"><table class="ho-table">' +
-          '<thead><tr><th>Name</th><th>Address / lot</th><th>Email</th><th>Phone</th><th>Dues</th><th>Amount due</th><th></th></tr></thead>' +
-          '<tbody>' + rows + '</tbody>' +
-        '</table></div>';
-    }
-    renderHomeownerForm();
-  }
-
-  function renderHomeownerForm() {
-    var box = $("#homeownersAdmin");
-    if (!box) return;
-    var list = (state.content && state.content.homeowners) || [];
-    var editing = state.editingHomeowner ? findById(list, state.editingHomeowner) : null;
-    var open = state.panels.homeowner || !!editing;
-    if (!open) {
-      box.innerHTML = '<button class="panel-toggle" type="button" data-toggle-panel="homeowner">+ Add homeowner</button>';
-      return;
-    }
-    var v = editing || { name: "", address: "", email: "", phone: "", duesStatus: "unpaid", amountDue: "" };
-    function opt(val, label) {
-      return '<option value="' + val + '"' + (v.duesStatus === val ? " selected" : "") + '>' + label + '</option>';
-    }
-    box.innerHTML =
-      '<div class="admin-add">' +
-      '<div class="admin-badge">🔧 Board tools</div>' +
-      '<h4>' + (editing ? "Edit homeowner" : "Add homeowner") + '</h4>' +
-      '<form class="admin-grid" data-save-ho>' +
-        '<input type="hidden" name="id" value="' + esc(editing ? editing.id : "") + '" />' +
-        '<div class="admin-row2">' +
-          '<div class="admin-field"><label>Name</label><input name="name" required value="' + esc(v.name) + '" /></div>' +
-          '<div class="admin-field"><label>Address / lot</label><input name="address" value="' + esc(v.address) + '" /></div>' +
-        '</div>' +
-        '<div class="admin-row2">' +
-          '<div class="admin-field"><label>Email</label><input name="email" type="email" value="' + esc(v.email) + '" /></div>' +
-          '<div class="admin-field"><label>Phone</label><input name="phone" value="' + esc(v.phone) + '" /></div>' +
-        '</div>' +
-        '<div class="admin-row2">' +
-          '<div class="admin-field"><label>Dues status</label><select name="duesStatus">' + opt("unpaid", "Unpaid") + opt("paid", "Paid") + opt("partial", "Partial") + '</select></div>' +
-          '<div class="admin-field"><label>Amount due</label><input name="amountDue" value="' + esc(v.amountDue) + '" placeholder="e.g. $150 or 0" /></div>' +
-        '</div>' +
-        '<div class="admin-actions">' +
-          '<button class="admin-btn" type="submit">' + (editing ? "Save changes" : "Add homeowner") + '</button>' +
-          '<button class="mini-btn" type="button" data-toggle-panel="homeowner">Cancel</button>' +
-          '<span class="admin-status" data-status></span>' +
-        '</div>' +
-      '</form>' +
-      '</div>';
-  }
-
-  function fmtTime(iso) {
-    try { return new Date(iso).toLocaleString(); } catch (e) { return iso || ""; }
-  }
-
-  function renderSignins() {
-    var box = $("#signinsPanel");
-    if (!box) return;
-    if (!isAdmin()) { box.innerHTML = ""; return; }
-    var list = (state.content && state.content.signins) || [];
-    var body = list.length
-      ? '<div class="ho-scroll"><table class="ho-table" style="min-width:440px;">' +
-          '<thead><tr><th>When</th><th>Email</th><th>Role</th></tr></thead><tbody>' +
-          list.slice(0, 50).map(function (s) {
-            return '<tr><td>' + esc(fmtTime(s.at)) + '</td><td>' + esc(s.email || "—") + '</td><td>' +
-              (s.role === "admin" ? "Board" : "Homeowner") + '</td></tr>';
-          }).join("") +
-          '</tbody></table></div>' +
-          '<button class="mini-btn danger" type="button" data-clear-signins style="margin-top:12px;">Clear log</button>'
-      : '<p class="hint" style="margin:0;">No sign-ins recorded yet.</p>';
-    box.innerHTML =
-      '<h3 class="sub-h" style="margin:36px 0 6px;">Recent sign-ins</h3>' +
-      '<p class="section-sub" style="margin:0 0 14px;">Board-only record of who has signed in (most recent first).</p>' +
-      body;
+    var items = content().meetings;
+    $("#meetingsList").innerHTML = items.length
+      ? items.map(function (mi) {
+          return '<div class="pm-row"><span class="pm-title">' + esc(mi.title) + '</span>' +
+            '<div class="pm-links">' + docLink(mi.hasAgenda, mi.agenda, "Agenda") + docLink(mi.hasMinutes, mi.minutes, "Minutes") + '</div></div>';
+        }).join("")
+      : '<p class="section-sub" style="margin:0;">No past meetings posted yet.</p>';
   }
 
   function render() {
@@ -1032,11 +405,8 @@
     renderDocs();
     renderMeeting();
     renderPastMeetings();
-    renderHomeowners();
-    renderSignins();
   }
 
-  // ---------- Content fetch + admin actions ----------
   function fetchContent() {
     return fetch("/api/content", { headers: { accept: "application/json" } })
       .then(function (r) { return r.ok ? r.json() : null; })
@@ -1044,251 +414,57 @@
       .catch(function () {});
   }
 
-  function findById(arr, id) {
-    for (var i = 0; i < arr.length; i++) if (String(arr[i].id) === String(id)) return arr[i];
-    return null;
-  }
-
-  function metaFromUrl(u) {
-    u = (u || "").toString().toLowerCase();
-    var m = u.match(/\.([a-z0-9]{2,5})(?:[?#]|$)/);
-    return m ? m[1].toUpperCase() : "LINK";
-  }
-
-  async function adminAction(payload, statusEl) {
-    if (statusEl) statusEl.textContent = "Saving…";
-    try {
-      var r = await fetch("/api/admin/content", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!r.ok) {
-        var msg = "Couldn’t save. Please try again.";
-        try { var e = await r.json(); if (e && e.error) msg = e.error; } catch (x) {}
-        if (statusEl) statusEl.textContent = msg;
-        return false;
-      }
-      state.content = await r.json();
-      render(); // rebuilds the editors, clearing the form
-      return true;
-    } catch (e2) {
-      if (statusEl) statusEl.textContent = "Network error. Please try again.";
-      return false;
-    }
-  }
-
   // ---------- Sign-in modal ----------
-  var overlay = $("#signInOverlay");
-  var signInError = $("#signInError");
-
+  var overlay = $("#signInOverlay"), signInError = $("#signInError");
   function openSignIn() {
-    state.signInOpen = true;
-    signInError.hidden = true;
-    signInError.textContent = "";
+    state.signInOpen = true; signInError.hidden = true; signInError.textContent = "";
     overlay.hidden = false;
     var input = overlay.querySelector('input[name="email"]');
     if (input) input.focus();
   }
   function closeSignIn() {
-    state.signInOpen = false;
-    overlay.hidden = true;
-    $("#signInForm").reset();
-    signInError.hidden = true;
+    state.signInOpen = false; overlay.hidden = true; $("#signInForm").reset(); signInError.hidden = true;
   }
-
   overlay.addEventListener("click", function (e) { if (e.target === overlay) closeSignIn(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && state.signInOpen) closeSignIn(); });
 
   $("#signInForm").addEventListener("submit", async function (e) {
     e.preventDefault();
     var fd = new FormData(e.target);
-    var code = (fd.get("code") || "").toString();
-    var email = (fd.get("email") || "").toString();
     var btn = e.target.querySelector('button[type="submit"]');
     signInError.hidden = true;
     if (btn) btn.disabled = true;
     try {
       var r = await fetch("/api/login", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ code: code, email: email }),
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ code: (fd.get("code") || "").toString(), email: (fd.get("email") || "").toString() }),
       });
       if (r.ok) {
         var data = await r.json();
         state.role = data.role;
         closeSignIn();
         render();
-        fetchContent(); // load board contact, gated links, and (for board) homeowners
+        fetchContent();
       } else {
         var msg = "That code isn’t recognized.";
         try { var err = await r.json(); if (err && err.error) msg = err.error; } catch (e2) {}
-        signInError.textContent = msg;
-        signInError.hidden = false;
+        signInError.textContent = msg; signInError.hidden = false;
       }
     } catch (e3) {
-      signInError.textContent = "Couldn’t reach the server. Please try again.";
-      signInError.hidden = false;
+      signInError.textContent = "Couldn’t reach the server. Please try again."; signInError.hidden = false;
     } finally {
       if (btn) btn.disabled = false;
     }
   });
 
-  // Global delegated click handling
   document.addEventListener("click", function (e) {
-    var t = e.target.closest
-      ? e.target.closest("[data-open-signin],[data-signout],[data-toggle-panel],[data-doc-edit],[data-doc-del],[data-mtg-edit],[data-mtg-del],[data-board-edit],[data-board-del],[data-ho-edit],[data-ho-del],[data-clear-signins]")
-      : null;
+    var t = e.target.closest ? e.target.closest("[data-open-signin],[data-signout]") : null;
     if (!t) return;
-
     if (t.hasAttribute("data-open-signin")) { e.preventDefault(); openSignIn(); return; }
-
     if (t.hasAttribute("data-signout")) {
-      state.role = null; state.editingHomeowner = null; render();
+      state.role = null; render();
       fetch("/api/logout", { method: "POST" }).then(fetchContent).catch(function () {});
       return;
-    }
-
-    if (t.hasAttribute("data-toggle-panel")) {
-      var pk = t.getAttribute("data-toggle-panel");
-      state.panels[pk] = !state.panels[pk];
-      if (pk === "homeowner") state.editingHomeowner = null; // opening in add-mode / cancel
-      render();
-      return;
-    }
-
-    if (t.hasAttribute("data-doc-edit")) {
-      var docId = t.getAttribute("data-doc-edit");
-      var d = findById(content().documents, docId);
-      if (!d) return;
-      var dTitle = window.prompt("Document title", d.title);
-      if (dTitle === null) return;
-      var dUrl = window.prompt("Link (URL) — leave blank to keep it hidden", d.url || "");
-      if (dUrl === null) return;
-      var dNote = window.prompt("Description", d.note || "");
-      if (dNote === null) return;
-      adminAction({ action: "update-document", id: docId, patch: { title: dTitle, url: dUrl, note: dNote } });
-      return;
-    }
-    if (t.hasAttribute("data-doc-del")) {
-      var docId2 = t.getAttribute("data-doc-del");
-      var d2 = findById(content().documents, docId2);
-      if (d2 && window.confirm("Remove “" + d2.title + "” from the documents list?")) {
-        adminAction({ action: "delete-document", id: docId2 });
-      }
-      return;
-    }
-
-    if (t.hasAttribute("data-mtg-edit")) {
-      var mtgId = t.getAttribute("data-mtg-edit");
-      var mtg = findById(content().meetings, mtgId);
-      if (!mtg) return;
-      var mtTitle = window.prompt("Meeting title", mtg.title);
-      if (mtTitle === null) return;
-      var mtAgenda = window.prompt("Agenda link (URL) — leave blank to keep it hidden", mtg.agenda || "");
-      if (mtAgenda === null) return;
-      var mtMinutes = window.prompt("Minutes link (URL) — leave blank to keep it hidden", mtg.minutes || "");
-      if (mtMinutes === null) return;
-      adminAction({ action: "update-pastmeeting", id: mtgId, patch: { title: mtTitle, agenda: mtAgenda, minutes: mtMinutes } });
-      return;
-    }
-    if (t.hasAttribute("data-mtg-del")) {
-      var mtgId2 = t.getAttribute("data-mtg-del");
-      var mtg2 = findById(content().meetings, mtgId2);
-      if (mtg2 && window.confirm("Remove “" + mtg2.title + "” from past meetings?")) {
-        adminAction({ action: "delete-pastmeeting", id: mtgId2 });
-      }
-      return;
-    }
-
-    if (t.hasAttribute("data-board-edit")) {
-      var bId = t.getAttribute("data-board-edit");
-      var bm = findById(content().board, bId);
-      if (!bm) return;
-      var bRole = window.prompt("Role", bm.role);
-      if (bRole === null) return;
-      var bName = window.prompt("Name", bm.name);
-      if (bName === null) return;
-      var bEmail = window.prompt("Email (leave blank for none)", bm.email || "");
-      if (bEmail === null) return;
-      var bPhone = window.prompt("Phone (leave blank for none)", bm.phone || "");
-      if (bPhone === null) return;
-      adminAction({ action: "update-board", id: bId, patch: { role: bRole, name: bName, email: bEmail, phone: bPhone } });
-      return;
-    }
-    if (t.hasAttribute("data-board-del")) {
-      var bId2 = t.getAttribute("data-board-del");
-      var bm2 = findById(content().board, bId2);
-      if (bm2 && window.confirm("Remove “" + bm2.name + "” from the board?")) {
-        adminAction({ action: "delete-board", id: bId2 });
-      }
-      return;
-    }
-
-    if (t.hasAttribute("data-ho-edit")) {
-      state.editingHomeowner = t.getAttribute("data-ho-edit");
-      state.panels.homeowner = true;
-      render();
-      var f = $("#homeownersAdmin");
-      if (f && f.scrollIntoView) f.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    if (t.hasAttribute("data-ho-del")) {
-      var hoId = t.getAttribute("data-ho-del");
-      var ho = findById((state.content && state.content.homeowners) || [], hoId);
-      if (ho && window.confirm("Delete “" + ho.name + "” from the homeowner directory?")) {
-        if (state.editingHomeowner === hoId) state.editingHomeowner = null;
-        adminAction({ action: "delete-homeowner", id: hoId });
-      }
-      return;
-    }
-
-    if (t.hasAttribute("data-clear-signins")) {
-      if (window.confirm("Clear the entire sign-in log?")) {
-        adminAction({ action: "clear-signins" });
-      }
-      return;
-    }
-  });
-
-  // Delegated admin form submissions
-  document.addEventListener("submit", function (e) {
-    var f = e.target;
-    // Collapse a panel only after a successful save (keep it open on error so the
-    // status message stays visible).
-    function collapse(key) {
-      return function (ok) { if (ok) { state.panels[key] = false; render(); } };
-    }
-
-    if (f.matches("[data-add-doc]")) {
-      e.preventDefault();
-      var fd = new FormData(f);
-      var url = fd.get("url");
-      adminAction({ action: "add-document", doc: { title: fd.get("title"), note: fd.get("note"), url: url, meta: metaFromUrl(url) } }, f.querySelector("[data-status]")).then(collapse("docs"));
-    } else if (f.matches("[data-add-mtg]")) {
-      e.preventDefault();
-      var fm = new FormData(f);
-      adminAction({ action: "add-pastmeeting", item: { title: fm.get("title"), agenda: fm.get("agenda"), minutes: fm.get("minutes") } }, f.querySelector("[data-status]")).then(collapse("minutes"));
-    } else if (f.matches("[data-set-meeting]")) {
-      e.preventDefault();
-      var fd3 = new FormData(f);
-      adminAction({ action: "set-meeting", meeting: { date: fd3.get("date"), location: fd3.get("location"), link: fd3.get("link") } }, f.querySelector("[data-status]")).then(collapse("meeting"));
-    } else if (f.matches("[data-add-board]")) {
-      e.preventDefault();
-      var fb = new FormData(f);
-      adminAction({ action: "add-board", member: { role: fb.get("role"), name: fb.get("name"), email: fb.get("email"), phone: fb.get("phone") } }, f.querySelector("[data-status]")).then(collapse("board"));
-    } else if (f.matches("[data-save-ho]")) {
-      e.preventDefault();
-      var fh = new FormData(f);
-      var hoId = (fh.get("id") || "").toString();
-      var homeowner = {
-        name: fh.get("name"), address: fh.get("address"), email: fh.get("email"),
-        phone: fh.get("phone"), duesStatus: fh.get("duesStatus"), amountDue: fh.get("amountDue"),
-      };
-      adminAction(
-        hoId ? { action: "update-homeowner", id: hoId, patch: homeowner } : { action: "add-homeowner", homeowner: homeowner },
-        f.querySelector("[data-status]"),
-      ).then(function (ok) { if (ok) { state.editingHomeowner = null; state.panels.homeowner = false; render(); } });
     }
   });
 
@@ -1314,15 +490,10 @@
   // ---------- Init ----------
   $("#year").textContent = new Date().getFullYear();
   render();
-  fetchContent(); // load documents/meeting/minutes (gated fields resolve via cookie)
-
-  // Restore an existing session (signed cookie) on load, so a signed-in resident
-  // stays signed in across reloads.
+  fetchContent();
   fetch("/api/session", { headers: { accept: "application/json" } })
     .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (d) {
-      if (d && d.role) { state.role = d.role; render(); }
-    })
+    .then(function (d) { if (d && d.role) { state.role = d.role; render(); } })
     .catch(function () {});
 })();
 </script>
