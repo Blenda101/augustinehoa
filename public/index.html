@@ -200,7 +200,9 @@
           <div class="val">Jacqueline Roumou<br /><a href="mailto:Jackie.roumou@gmail.com">Jackie.roumou@gmail.com</a></div>
         </div>
       </div>
-      <form class="contact-form" id="contactForm">
+      <form class="contact-form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="contact" />
+        <p class="visually-hidden" aria-hidden="true"><label>Leave this empty: <input name="bot-field" /></label></p>
         <div class="field-row">
           <label class="field">
             <span>Name</span>
@@ -231,7 +233,7 @@
           <textarea name="message" rows="4" required></textarea>
         </label>
         <button type="submit" class="submit" id="submitBtn">Send message</button>
-        <div class="form-note" id="formNote">This form isn't connected to email yet. Until it is, write to the board member listed above.</div>
+        <div class="form-note" id="formNote">Your message goes to the board. We aim to reply within a few days.</div>
       </form>
     </div>
   </section>
@@ -468,13 +470,28 @@
     }
   });
 
-  // ---------- Contact form ----------
-  $("#contactForm").addEventListener("submit", function (e) {
+  // ---------- Contact form (Netlify Forms via AJAX) ----------
+  $("#contactForm").addEventListener("submit", async function (e) {
     e.preventDefault();
-    state.sent = true;
-    $("#submitBtn").textContent = "Message sent";
-    $("#submitBtn").disabled = true;
-    $("#formNote").textContent = "Thanks — a board member will follow up. (Demo form: not yet connected to email.)";
+    var form = e.target, btn = $("#submitBtn"), note = $("#formNote");
+    btn.disabled = true;
+    btn.textContent = "Sending…";
+    try {
+      var body = new URLSearchParams(new FormData(form)).toString();
+      var r = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body,
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      btn.textContent = "Message sent";
+      note.textContent = "Thanks — a board member will follow up.";
+      form.reset();
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = "Send message";
+      note.textContent = "Sorry, that didn’t go through. Please email the board member listed, or try again.";
+    }
   });
 
   // ---------- Mobile nav ----------
